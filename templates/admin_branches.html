@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Departments - MediCare Hospital{% endblock %}
+
+{% block content %}
+<section class="dashboard-head">
+    <div>
+        <span class="eyebrow">ADMIN / DEPARTMENTS</span>
+        <h1>Clinical departments</h1>
+        <p>Manage the specialties shown to patients.</p>
+    </div>
+</section>
+
+<div class="admin-grid">
+    <section class="panel">
+        <div class="panel-head">
+            <h2>Add department</h2>
+        </div>
+        <form method="post" action="{{ url_for('admin_branches') }}">
+            <label for="branch-name">
+                Department name
+                <input id="branch-name" name="name" required placeholder="e.g. Dermatology">
+            </label>
+            <button class="btn btn-primary">Add department</button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <div class="panel-head">
+            <h2>Department capacity</h2>
+        </div>
+        <div class="capacity-list">
+            {% for b in branches %}
+                <div>
+                    <span>{{ b.name }}</span>
+                    <strong>{{ b.doctors }} doctors</strong>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

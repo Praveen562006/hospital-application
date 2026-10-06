@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block title %}Secure Payment - Medilab{% endblock %}
+
+{% block content %}
+<section class="dashboard-head">
+    <div>
+        <span class="eyebrow">SECURE CHECKOUT</span>
+        <h1>Complete your payment</h1>
+        <p>Your slot is held for {{ hold_minutes }} minutes. Pay now to confirm the appointment - the receipt is issued instantly.</p>
+    </div>
+    <div class="hero-actions">
+        <form method="post" action="{{ url_for('release_booking', appointment_id=appointment.id) }}">
+            <button class="btn btn-ghost" type="submit">Cancel & choose another slot</button>
+        </form>
+    </div>
+</section>
+
+<div class="pay-layout">
+
+    <!-- Payment form -->
+    <form class="pay-card" id="paymentForm" method="post" action="{{ url_for('payment_process', appointment_id=appointment.id) }}" novalidate>
+        <div class="pay-card-head">
+            <div>
+                <span class="eyebrow">PAYMENT METHOD</span>
+                <h1>Pay {{ currency_symbol }}{{ consultation_fee }}</h1>
+            </div>
+            <span class="secure-chip">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                256-bit encrypted
+            </span>
+        </div>
+
+        <div class="pay-card-body">
+
+            <!-- Method selector -->
+            <div class="pay-methods">
+                <div class="pay-method">
+                    <input type="radio" name="method" id="method-card" value="card" checked>
+                    <label for="method-card">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                            <line x1="2" y1="10" x2="22" y2="10"></line>
+                        </svg>
+                        Card
+                    </label>
+                </div>
+                <div class="pay-method">
+                    <input type="radio" name="method" id="method-upi" value="upi">
+                    <label for="method-upi">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                        UPI
+                    </label>
+                </div>
+                <div class="pay-method">
+                    <input type="radio" name="method" id="method-netbanking" value="netbanking">
+                    <label for="method-netbanking">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 21h18"></path>
+                            <path d="M5 21V8l7-5 7 5v13"></path>
+                            <path d="M9 21v-6h6v6"></path>
+                        </svg>
+                        Net banking
+                    </label>
+                </div>
+            </div>
+
+            <!-- CARD PANEL -->
+            <div class="method-panel is-active" data-method-panel="card">
+                <div class="card-visual">
+                    <div class="card-chip"></div>
+                    <div class="cv-brand" id="cardBrandLabel">Your bank card</div>
+                    <div class="cv-number" id="cvNumber">•••• •••• •••• ••••</div>
+                    <div class="cv-foot">
+                        <div>Card holder<strong id="cvHolder">YOUR NAME</strong></div>
+                        <div>Expires<strong id="cvExpiry">MM/YY</strong></div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label for="card_name">Name on card</label>
+                    <div class="input-icon-wrap">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <input type="text" id="card_name" name="card_name" placeholder="e.g. Priya Sharma" autocomplete="cc-name" maxlength="40" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label for="card_number">Card number</label>
+                    <div class="input-icon-wrap">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                            <line x1="2" y1="10" x2="22" y2="10"></line>
+                        </svg>
+                        <input type="text" id="card_number" name="card_number" inputmode="numeric" placeholder="1234 5678 9012 3456" autocomplete="cc-number" maxlength="23" required>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-row" style="margin-bottom: 0;">
+                        <label for="card_expiry">Expiry date</label>
+                        <input type="text" id="card_expiry" name="card_expiry" inputmode="numeric" placeholder="MM/YY" autocomplete="cc-exp" maxlength="5" required>
+                    </div>
+                    <div class="form-row" style="margin-bottom: 0;">
+                        <label for="card_cvv">Security code</label>
+                        <input type="password" id="card_cvv" name="card_cvv" inputmode="numeric" placeholder="CVV" autocomplete="cc-csc" maxlength="4" required>
+                    </div>
+                </div>
+
+                <p class="helper" id="cardHelper">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    Any Luhn-valid test card works. Nothing is charged - this is a demo gateway.
+                </p>
+
+                <div class="test-hint">
+                    Demo cards: <code>4242 4242 4242 4242</code> succeeds ·
+                    <code>4000 0000 0000 0002</code> declines ·
+                    future expiry, any 3-digit CVV.
+                </div>
+            </div>
+
+            <!-- UPI PANEL -->
+            <div class="method-panel" data-method-panel="upi">
+                <div class="form-row">
+                    <label for="upi_id">UPI ID <span class="hint">e.g. priya@okhdfcbank</span></label>
+                    <div class="input-icon-wrap">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                        <input type="text" id="upi_id" name="upi_id" placeholder="name@bank" autocomplete="off" maxlength="50">
+                    </div>
+                </div>
+                <div class="test-hint">
+                    A collect request is sent to your UPI app. Approve it to confirm the appointment.
+                </div>
+            </div>
+
+            <!-- NETBANKING PANEL -->
+            <div class="method-panel" data-method-panel="netbanking">
+                <div class="form-row">
+                    <label for="bank">Choose your bank</label>
+                    <select id="bank" name="bank">
+                        <option value="">Select a bank</option>
+                        <option>HDFC Bank</option>
+                        <option>ICICI Bank</option>
+                        <option>State Bank of India</option>
+                        <option>Axis Bank</option>
+                        <option>Kotak Mahindra Bank</option>
+                        <option>Punjab National Bank</option>
+                    </select>
+                </div>
+                <div class="test-hint">
+                    You will be redirected to your bank's secure page to authorise the payment.
+                </div>
+            </div>
+
+            <p class="field-error" id="payError" hidden></p>
+        </div>
+    </form>
+
+    <!-- Order summary -->
+    <aside class="order-card">
+        <div class="order-head">
+            <span class="eyebrow">ORDER SUMMARY</span>
+            <h2>Your appointment</h2>
+        </div>
+        <div class="order-body">
+
+            <div class="doctor-strip">
+                <div class="avatar">
+                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <div>
+                    <h3>Dr. {{ appointment.doctor }}</h3>
+                    <p>{{ appointment.branch }} · 30 minute consultation</p>
+                </div>
+            </div>
+
+            <div class="summary-row">
+                <span class="k">Date</span>
+                <span class="v">{{ appointment.appointment_time[:10] }}</span>
+            </div>
+            <div class="summary-row">
+                <span class="k">Time</span>
+                <span class="v">{{ appointment.appointment_time[11:16] }}</span>
+            </div>
+            <div class="summary-row">
+                <span class="k">Booking ID</span>
+                <span class="v">#APT-{{ appointment.id }}</span>
+            </div>
+            <div class="summary-row">
+                <span class="k">Consultation fee</span>
+                <span class="v">{{ currency_symbol }}{{ consultation_fee }}</span>
+            </div>
+            <div class="summary-row">
+                <span class="k">Taxes & fees</span>
+                <span class="v">Included</span>
+            </div>
+
+            <div class="total-row">
+                <span>Amount payable</span>
+                <strong>{{ currency_symbol }}{{ consultation_fee }}</strong>
+            </div>
+
+            <div class="pay-button-wrap">
+                <button class="btn btn-primary btn-lg full" type="submit" form="paymentForm" id="payBtn">
+                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    Pay {{ currency_symbol }}{{ consultation_fee }}
+                </button>
+                <p class="pay-terms">
+                    By paying you agree to Medilab's booking terms. Free cancellation and full refund any time before the visit.
+                </p>
+            </div>
+
+            <ul class="secure-list">
+                <li>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Payment details are encrypted end to end.
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Your card number is never stored on our servers.
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Instant e-receipt with a unique payment reference.
+                </li>
+            </ul>
+        </div>
+    </aside>
+</div>
+
+<!-- Processing overlay -->
+<div class="pay-overlay" id="payOverlay" aria-hidden="true">
+    <div class="processing-box">
+        <div class="spinner"></div>
+        <h3>Processing payment</h3>
+        <p>Please keep this window open.</p>
+        <div class="processing-steps" id="processingSteps">
+            <div data-pstep="1">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Encrypting card details
+            </div>
+            <div data-pstep="2">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Contacting your bank
+            </div>
+            <div data-pstep="3">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Confirming appointment
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

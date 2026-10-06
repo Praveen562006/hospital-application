@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}All Appointments - MediCare Hospital{% endblock %}
+
+{% block content %}
+<section class="dashboard-head">
+    <div>
+        <span class="eyebrow">ADMIN / APPOINTMENTS</span>
+        <h1>Appointment registry</h1>
+        <p>Review the complete booking history with payment status and receipts.</p>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date / time</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Department</th>
+                    <th>Payment</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in appointments %}
+                    <tr>
+                        <td>{{ a.appointment_time }}</td>
+                        <td>{{ a.patient }}</td>
+                        <td>Dr. {{ a.doctor }}</td>
+                        <td><span class="badge">{{ a.branch }}</span></td>
+                        <td>
+                            {% if a.status == 'pending' %}
+                                <span class="badge badge-warn">Unpaid hold</span>
+                            {% elif a.reference %}
+                                <span class="badge badge-success">
+                                    {{ currency_symbol }}{{ a.amount }} · {{ a.method }}
+                                    {% if a.card_last4 %}(••{{ a.card_last4 }}){% endif %}
+                                </span><br>
+                                <small class="muted">{{ a.reference }}</small>
+                            {% else %}
+                                <span class="badge badge-muted">No payment record</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="post" action="{{ url_for('admin_cancel_appointment', appointment_id=a.id) }}">
+                                <button class="btn btn-danger-outline btn-sm" onclick="return confirm('Remove this appointment{% if a.status == 'confirmed' %} and trigger a refund{% endif %}?')">
+                                    Remove
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="empty-cell">No appointments.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

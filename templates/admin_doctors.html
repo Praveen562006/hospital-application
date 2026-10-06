@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Doctors - MediCare Hospital{% endblock %}
+
+{% block content %}
+<section class="dashboard-head">
+    <div>
+        <span class="eyebrow">ADMIN / DOCTORS</span>
+        <h1>Doctor directory</h1>
+        <p>Add clinicians and assign them to departments.</p>
+    </div>
+</section>
+
+<div class="admin-grid">
+    <section class="panel">
+        <div class="panel-head">
+            <h2>Add doctor</h2>
+        </div>
+        <form method="post" action="{{ url_for('admin_doctors') }}">
+            <label for="doctor-name">
+                Doctor name
+                <input id="doctor-name" name="name" required placeholder="e.g. Dr. Jane Smith">
+            </label>
+            <label for="doctor-branch">
+                Department
+                <select id="doctor-branch" name="branch_id" required>
+                    {% for b in branches %}
+                        <option value="{{ b.id }}">{{ b.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button class="btn btn-primary">Add doctor</button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <div class="panel-head">
+            <h2>Current doctors</h2>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in doctors %}
+                        <tr>
+                            <td><strong>Dr. {{ d.name }}</strong></td>
+                            <td><span class="badge">{{ d.branch }}</span></td>
+                            <td>
+                                <form method="post" action="{{ url_for('delete_doctor', doctor_id=d.id) }}">
+                                    <button class="btn btn-danger-outline btn-sm" onclick="return confirm('Remove this doctor?')">
+                                        Remove
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

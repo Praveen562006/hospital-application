@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Medilab - Healthcare & Appointments{% endblock %}</title>
+    <meta name="description" content="Book hospital appointments with certified specialists in seconds.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- Top contact bar -->
+<div class="top-contact-bar">
+    <div class="contact-info">
+        <span class="icon-text">
+            <svg class="svg-inline" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                <path d="M22 7l-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+            </svg>
+            contact@medilab.com
+        </span>
+        <span class="icon-text">
+            <svg class="svg-inline" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            +1 5589 55488 55
+        </span>
+        <span class="icon-text">
+            <svg class="svg-inline" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            Mon - Sat: 9:00 AM - 5:00 PM
+        </span>
+    </div>
+
+    <div class="top-right-bar">
+        <div class="social-links-top">
+            <a href="#" title="Twitter / X" aria-label="Twitter">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+            </a>
+            <a href="#" title="Facebook" aria-label="Facebook">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                    <path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.704 0-1.244.116-1.616.349-.493.308-.74.88-.74 1.716v1.915h4.156l-.558 3.667h-3.598v7.98h-4.87z"/>
+                </svg>
+            </a>
+            <a href="#" title="Instagram" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+            </a>
+            <a href="#" title="LinkedIn" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="top-auth-links">
+            {% if current_user %}
+                <span class="user-greeting">
+                    <svg class="svg-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <strong>{{ current_user.username }}</strong> · {{ current_user.role|title }}
+                </span>
+                <a href="{{ url_for('logout') }}" class="top-link-btn">
+                    <svg class="svg-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Logout
+                </a>
+            {% else %}
+                <a href="{{ url_for('login', role='patient') }}">Patient Login</a>
+                <a href="{{ url_for('signup') }}">Register</a>
+                <a href="{{ url_for('login', role='admin') }}">Admin</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Main navigation -->
+<header class="topbar">
+    <a class="brand" href="{{ url_for('index') }}">Medilab<span>.</span></a>
+
+    <nav class="navlinks" id="navLinks">
+        <a href="{{ url_for('index') }}">Home</a>
+        {% if current_user and current_user.role == 'patient' %}
+            <a href="{{ url_for('patient_dashboard') }}">My Appointments</a>
+            <a href="{{ url_for('book') }}">Book a Visit</a>
+            <a href="{{ url_for('index') }}#departments">Departments</a>
+        {% elif current_user and current_user.role == 'admin' %}
+            <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('admin_doctors') }}">Doctors</a>
+            <a href="{{ url_for('admin_branches') }}">Departments</a>
+            <a href="{{ url_for('admin_appointments') }}">Appointments</a>
+        {% else %}
+            <a href="{{ url_for('index') }}#departments">Departments</a>
+            <a href="{{ url_for('index') }}#doctors">Doctors</a>
+            <a href="{{ url_for('login', role='patient') }}">Patient Portal</a>
+            <a href="{{ url_for('login', role='admin') }}">Admin</a>
+        {% endif %}
+    </nav>
+
+    <div class="header-actions">
+        {% if current_user and current_user.role == 'admin' %}
+            <a class="btn-appointment" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+        {% else %}
+            <a class="btn-appointment" href="{{ url_for('book') }}">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                Book Appointment
+            </a>
+        {% endif %}
+
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                <line x1="4" y1="7" x2="20" y2="7"></line>
+                <line x1="4" y1="12" x2="20" y2="12"></line>
+                <line x1="4" y1="17" x2="20" y2="17"></line>
+            </svg>
+        </button>
+    </div>
+</header>
+
+<!-- Flash alerts -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="flash-wrap">
+            {% for category, msg in messages %}
+                <div class="flash {{ category }}" role="status">{{ msg }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<footer>
+    <div>
+        <strong>Medilab.</strong>
+        <p>Modern clinical healthcare with certified specialists, transparent pricing, and instant online payment confirmation.</p>
+    </div>
+    <div class="clinic-hours">
+        Clinic Consultation Hours:
+        <strong>Mon - Sat: 9:00 AM - 5:00 PM</strong>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

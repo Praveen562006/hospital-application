@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Patient Registration - MediCare Hospital{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-icon">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="8.5" cy="7" r="4"></circle>
+                <line x1="20" y1="8" x2="20" y2="14"></line>
+                <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+        </div>
+        <span class="eyebrow">PATIENT REGISTRATION</span>
+        <h1>Create your account</h1>
+        <p>Book, pay for and manage consultations all in one place.</p>
+
+        <form method="post" action="{{ url_for('signup') }}" id="signup-form">
+            <label for="username">
+                Username
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    minlength="3"
+                    required
+                    placeholder="Enter your username (min 3 characters)"
+                    autocomplete="username"
+                    autofocus
+                >
+            </label>
+
+            <label for="password">
+                Password
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    minlength="4"
+                    required
+                    placeholder="Enter your password (min 4 characters)"
+                    autocomplete="new-password"
+                >
+            </label>
+
+            <label for="confirm_password">
+                Confirm Password
+                <input
+                    type="password"
+                    id="confirm_password"
+                    name="confirm_password"
+                    minlength="4"
+                    required
+                    placeholder="Re-enter your password"
+                    autocomplete="new-password"
+                >
+            </label>
+
+            <button type="submit" class="btn btn-primary full" id="signup-submit">
+                Create account
+            </button>
+        </form>
+
+        <p class="auth-link">
+            Already registered? <a href="{{ url_for('login', role='patient') }}">Sign in</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

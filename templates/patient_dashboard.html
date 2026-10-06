@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Patient Dashboard - MediCare Hospital{% endblock %}
+
+{% block content %}
+<section class="dashboard-head">
+    <div>
+        <span class="eyebrow">PATIENT PORTAL</span>
+        <h1>Hello, {{ current_user.username|title }}.</h1>
+        <p>Here is what's coming up and how your consultations were paid for.</p>
+    </div>
+    <div class="hero-actions">
+        <a class="btn btn-primary" href="{{ url_for('book') }}">+ Book appointment</a>
+    </div>
+</section>
+
+<div class="metric-grid">
+    <div class="metric">
+        <span>Upcoming visits</span>
+        <strong>{{ upcoming|length }}</strong>
+    </div>
+    <div class="metric">
+        <span>Past visits</span>
+        <strong>{{ past_count }}</strong>
+    </div>
+    <div class="metric">
+        <span>Consultation fee</span>
+        <strong>{{ currency_symbol }}{{ consultation_fee }}</strong>
+    </div>
+    <div class="metric">
+        <span>Clinic days</span>
+        <strong>Mon-Sat</strong>
+    </div>
+</div>
+
+<section class="panel">
+    <div class="panel-head">
+        <div>
+            <span class="eyebrow">NEXT VISITS</span>
+            <h2>Your appointments</h2>
+        </div>
+        <a href="{{ url_for('book') }}" class="text-link">Find another slot →</a>
+    </div>
+
+    {% if upcoming %}
+        <div class="appointment-list">
+            {% for a in upcoming %}
+                <div class="appointment-card {{ 'is-pending' if a.status == 'pending' else '' }}">
+                    <div class="date-box">
+                        <strong>{{ a.appointment_time[8:10] }}</strong>
+                        <span>{{ a.appointment_time[5:7] }}/{{ a.appointment_time[:4] }}</span>
+                    </div>
+                    <div class="appt-main">
+                        <div class="appt-meta">
+                            <span class="badge">{{ a.branch }}</span>
+                            {% if a.status == 'pending' %}
+                                <span class="badge badge-warn">Awaiting payment</span>
+                            {% else %}
+                                <span class="badge badge-success">
+                                    <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    Paid
+                                </span>
+                            {% endif %}
+                        </div>
+                        <h3>Dr. {{ a.doctor }}</h3>
+                        <p>{{ a.appointment_time[11:16] }} · 30 minute consultation</p>
+                    </div>
+
+                    <div class="appt-meta">
+                        {% if a.status == 'confirmed' %}
+                            <span class="receipt">
+                                {{ currency_symbol }}{{ a.amount if a.amount else consultation_fee }}
+                                · {{ a.reference }}
+                                {% if a.method == 'card' and a.card_brand %}({{ a.card_brand }} ••{{ a.card_last4 }}){% endif %}
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="appt-actions">
+                        {% if a.status == 'pending' %}
+                            <a class="btn btn-primary btn-sm" href="{{ url_for('payment_checkout', appointment_id=a.id) }}">
+                                Pay {{ currency_symbol }}{{ consultation_fee }}
+                            </a>
+                        {% endif %}
+                        <form method="post" action="{{ url_for('cancel_appointment', appointment_id=a.id) }}" onsubmit="return confirm('Cancel this {% if a.status == 'confirmed' %}appointment{% else %}booking{% endif %}?{% if a.status == 'confirmed' %} Your fee will be refunded.{% endif %}')">
+                            <button class="btn btn-danger-outline">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty">
+            <div class="empty-icon">
+                <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+            </div>
+            <h3>No upcoming appointments</h3>
+            <p>Choose a specialist and see available times. Pay online and get confirmed instantly.</p>
+            <a class="btn btn-primary" href="{{ url_for('book') }}">Book your first appointment</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ role|title }} Login - MediCare Hospital{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-icon">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+        </div>
+        <span class="eyebrow">{{ role|upper }} PORTAL</span>
+        <h1>Welcome back</h1>
+        <p>Sign in to manage your healthcare appointments and payments.</p>
+
+        <form method="post" action="{{ url_for('login', role=role) }}" id="login-form">
+            <label for="username">
+                Username
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    required
+                    placeholder="Enter your username"
+                    autocomplete="username"
+                    autofocus
+                >
+            </label>
+
+            <label for="password">
+                Password
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                >
+            </label>
+
+            <button type="submit" class="btn btn-primary full" id="login-submit">
+                Sign in to Medilab
+            </button>
+        </form>
+
+        <ul class="auth-features">
+            <li>
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Book appointments in under a minute
+            </li>
+            <li>
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Pay securely online - card, UPI or net banking
+            </li>
+            <li>
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Free cancellation with full refund
+            </li>
+        </ul>
+
+        {% if role == 'patient' %}
+            <p class="auth-link">
+                New patient? <a href="{{ url_for('signup') }}">Create an account</a>
+            </p>
+            <div class="demo-credentials">
+                <span>Demo: <strong>berk</strong> / <strong>berk</strong></span>
+            </div>
+        {% else %}
+            <p class="auth-link">
+                Looking for patient login? <a href="{{ url_for('login', role='patient') }}">Patient portal</a>
+            </p>
+            <div class="demo-credentials">
+                <span>Demo: <strong>admin</strong> / <strong>admin</strong></span>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

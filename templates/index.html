@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+
+{% block title %}Medilab - Welcome to Medilab Hospital{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<section class="medilab-hero">
+    <div class="hero-inner">
+        <span class="hero-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--primary)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            Online booking & instant payment confirmation
+        </span>
+        <h1>Your health, our <em>priority</em>.</h1>
+        <p>We are a dedicated team of medical professionals delivering exceptional patient care. Book a 30-minute consultation with a certified specialist - pay online and get your slot confirmed in seconds.</p>
+
+        <div class="hero-btns">
+            <a class="btn btn-primary btn-lg" href="{{ url_for('book') if (current_user and current_user.role == 'patient') else url_for('login', role='patient') }}">
+                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                Make an Appointment
+            </a>
+            <a class="btn btn-ghost btn-lg" href="{{ url_for('signup') }}">
+                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                    <line x1="20" y1="8" x2="20" y2="14"></line>
+                    <line x1="23" y1="11" x2="17" y2="11"></line>
+                </svg>
+                New Patient Registration
+            </a>
+        </div>
+
+        <div class="hero-trust">
+            <div>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                {{ stats.doctors }} specialist doctors
+            </div>
+            <div>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Zero double-bookings
+            </div>
+            <div>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Consultations flat {{ currency_symbol }}{{ consultation_fee }}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature cards -->
+<div class="hero-cards-wrap">
+    <div class="hero-cards-grid">
+        <div class="card-why-choose">
+            <div>
+                <h3>Why Choose Medilab?</h3>
+                <p>Clinical excellence meets modern scheduling. Choose a specialist, pick a live slot, pay securely online and walk in confirmed - all in under a minute.</p>
+            </div>
+            <a href="{{ url_for('book') if (current_user and current_user.role == 'patient') else url_for('login', role='patient') }}" class="btn-learn-more">
+                Book now →
+            </a>
+        </div>
+
+        <div class="medilab-feature-card">
+            <div class="card-icon">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                    <path d="M9 12h6"></path>
+                    <path d="M9 16h6"></path>
+                    <path d="M9 8h6"></path>
+                </svg>
+            </div>
+            <h3>Clinical Departments</h3>
+            <p>Comprehensive care across Cardiology, Neurology, Pediatrics and more.</p>
+        </div>
+
+        <div class="medilab-feature-card">
+            <div class="card-icon">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                </svg>
+            </div>
+            <h3>Secure Online Payment</h3>
+            <p>Pay by card, UPI or net banking. Instant e-receipt and a protectable, refundable booking.</p>
+        </div>
+
+        <div class="medilab-feature-card">
+            <div class="card-icon">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="7" width="18" height="13" rx="2"></rect>
+                    <path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"></path>
+                    <line x1="12" y1="11" x2="12" y2="16"></line>
+                    <line x1="9.5" y1="13.5" x2="14.5" y2="13.5"></line>
+                </svg>
+            </div>
+            <h3>Certified Specialists</h3>
+            <p>Experienced clinicians available Monday to Saturday, 9:00 AM to 5:00 PM.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Stats -->
+<section class="stats-section">
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-icon">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>
+            <div>
+                <strong>{{ stats.doctors }}</strong>
+                <span>Doctors & Specialists</span>
+            </div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-icon">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 21h18"></path>
+                    <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path>
+                    <line x1="12" y1="7" x2="12" y2="11"></line>
+                    <line x1="10" y1="9" x2="14" y2="9"></line>
+                </svg>
+            </div>
+            <div>
+                <strong>{{ stats.specialties }}</strong>
+                <span>Clinical Departments</span>
+            </div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-icon">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                </svg>
+            </div>
+            <div>
+                <strong>{{ stats.patients }}</strong>
+                <span>Registered Patients</span>
+            </div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-icon">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <polyline points="9 16 11 18 15 14"></polyline>
+                </svg>
+            </div>
+            <div>
+                <strong>{{ stats.appointments }}</strong>
+                <span>Confirmed Consultations</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Departments -->
+<section class="section" id="departments">
+    <div class="section-title">
+        <h2>Medical Departments</h2>
+        <p>Explore our specialized clinical departments staffed by dedicated medical experts.</p>
+    </div>
+
+    <div class="department-grid">
+        {% for branch in branches %}
+            <div class="department-card">
+                <div class="dept-icon">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="16"></line>
+                        <line x1="8" y1="12" x2="16" y2="12"></line>
+                    </svg>
+                </div>
+                <h3>{{ branch.name }}</h3>
+                <p>Specialized diagnostic and therapeutic care provided by our {{ branch.name }} clinician team.</p>
+                <a href="{{ url_for('book') if (current_user and current_user.role == 'patient') else url_for('login', role='patient') }}" class="text-link">
+                    Book Consultation
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Doctors -->
+<section class="section" id="doctors">
+    <div class="section-title">
+        <h2>Our Doctors</h2>
+        <p>Meet our experienced physicians available for 30-minute consultations - bookable online, every weekday.</p>
+    </div>
+
+    <div class="doctors-grid">
+        {% for doc in doctors %}
+            <div class="doctor-card">
+                <div>
+                    <div class="doc-avatar">
+                        <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                            <path d="M12 14v3"></path>
+                            <path d="M10 17h4"></path>
+                        </svg>
+                    </div>
+                    <h4>Dr. {{ doc.name }}</h4>
+                    <span class="badge">{{ doc.branch }}</span>
+                    <p>30-minute consultations · Mon - Sat · Online payment</p>
+                </div>
+                <a class="btn btn-primary full btn-sm" href="{{ url_for('book') if (current_user and current_user.role == 'patient') else url_for('login', role='patient') }}">
+                    Book Appointment
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
