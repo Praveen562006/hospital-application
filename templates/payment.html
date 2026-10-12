@@ -1,18 +1,29 @@
 {% extends "base.html" %}
 
-{% block title %}Secure Payment - Medilab{% endblock %}
+{% block title %}Secure Payment - Psmhealthcare{% endblock %}
 
 {% block content %}
 <section class="dashboard-head">
     <div>
         <span class="eyebrow">SECURE CHECKOUT</span>
         <h1>Complete your payment</h1>
-        <p>Your slot is held for {{ hold_minutes }} minutes. Pay now to confirm the appointment - the receipt is issued instantly.</p>
+        <p>
+            {% if appointment.status == 'pending' %}
+                Your slot is held for {{ hold_minutes }} minutes. Pay now to confirm the appointment.
+            {% else %}
+                Your appointment is confirmed. Online payment is optional; you can also pay at the clinic.
+            {% endif %}
+            A receipt is issued instantly after online payment.
+        </p>
     </div>
     <div class="hero-actions">
-        <form method="post" action="{{ url_for('release_booking', appointment_id=appointment.id) }}">
-            <button class="btn btn-ghost" type="submit">Cancel & choose another slot</button>
-        </form>
+        {% if appointment.status == 'pending' %}
+            <form method="post" action="{{ url_for('release_booking', appointment_id=appointment.id) }}">
+                <button class="btn btn-ghost" type="submit">Cancel & choose another slot</button>
+            </form>
+        {% else %}
+            <a class="btn btn-ghost" href="{{ url_for('patient_dashboard') }}">Back to appointments</a>
+        {% endif %}
     </div>
 </section>
 
@@ -75,7 +86,7 @@
                 <div class="card-visual">
                     <div class="card-chip"></div>
                     <div class="cv-brand" id="cardBrandLabel">Your bank card</div>
-                    <div class="cv-number" id="cvNumber">•••• •••• •••• ••••</div>
+                    <div class="cv-number" id="cvNumber">**** **** **** ****</div>
                     <div class="cv-foot">
                         <div>Card holder<strong id="cvHolder">YOUR NAME</strong></div>
                         <div>Expires<strong id="cvExpiry">MM/YY</strong></div>
@@ -125,8 +136,8 @@
                 </p>
 
                 <div class="test-hint">
-                    Demo cards: <code>4242 4242 4242 4242</code> succeeds ·
-                    <code>4000 0000 0000 0002</code> declines ·
+                    Demo cards: <code>4242 4242 4242 4242</code> succeeds |
+                    <code>4000 0000 0000 0002</code> declines |
                     future expiry, any 3-digit CVV.
                 </div>
             </div>
@@ -187,7 +198,7 @@
                 </div>
                 <div>
                     <h3>Dr. {{ appointment.doctor }}</h3>
-                    <p>{{ appointment.branch }} · 30 minute consultation</p>
+                    <p>{{ appointment.branch }} | 30 minute consultation</p>
                 </div>
             </div>
 
@@ -226,7 +237,7 @@
                     Pay {{ currency_symbol }}{{ consultation_fee }}
                 </button>
                 <p class="pay-terms">
-                    By paying you agree to Medilab's booking terms. Free cancellation and full refund any time before the visit.
+                    By paying you agree to Psmhealthcare's booking terms. Free cancellation and full refund any time before the visit.
                 </p>
             </div>
 

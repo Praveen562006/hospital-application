@@ -1,22 +1,22 @@
 /* ============================================================
-   MEDILAB - HEALTHCARE UI SYSTEM
+   Psmhealthcare - Healthcare UI System
    Modern, accessible, mobile-first stylesheet
    ============================================================ */
 
 :root {
-    --primary: #1478d4;
-    --primary-600: #0f63b1;
-    --primary-700: #0b4f8d;
-    --primary-50: #eaf4ff;
-    --primary-100: #d3e8ff;
-    --accent: #17b8a6;
+    --primary: #0f7cbd;
+    --primary-600: #0d68a6;
+    --primary-700: #0b4f80;
+    --primary-50: #f2f8ff;
+    --primary-100: #e1f0ff;
+    --accent: #0f9e8c;
     --accent-50: #e6faf7;
-    --ink: #0e2233;
-    --ink-2: #33475b;
-    --muted: #66788a;
-    --line: #e3ecf4;
-    --line-strong: #cfdde9;
-    --bg: #f5f9fc;
+    --ink: #0f1b2d;
+    --ink-2: #3a4f63;
+    --muted: #6b7f96;
+    --line: #eef3f8;
+    --line-strong: #e1eaf3;
+    --bg: #f7fafc;
     --white: #ffffff;
     --danger: #e0475c;
     --danger-50: #fdecee;
@@ -53,7 +53,14 @@ html {
 }
 
 body {
-    background: var(--bg);
+    background-color: var(--bg);
+    background-image:
+        linear-gradient(rgba(247, 250, 252, 0.88), rgba(247, 250, 252, 0.88)),
+        url("../images/background.jpg");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     color: var(--ink-2);
     font-family: var(--font-body);
     font-size: 15px;
@@ -532,16 +539,14 @@ svg {
     display: flex;
     align-items: center;
     padding: 84px 0 160px;
-    background-color: #eaf4fb;
     background-image:
         linear-gradient(95deg,
             rgba(234, 244, 251, 0.98) 0%,
             rgba(234, 244, 251, 0.92) 45%,
             rgba(234, 244, 251, 0.35) 78%,
-            rgba(234, 244, 251, 0.05) 100%),
-        url("../images/backround.jpg");
+            rgba(234, 244, 251, 0.05) 100%);
     background-size: cover;
-    background-position: right center;
+    background-position: center center;
 }
 
 .hero-inner {
@@ -1228,7 +1233,8 @@ svg {
     border-color: var(--primary);
     background: var(--primary-50);
     color: var(--primary-700);
-    box-shadow: 0 8px 22px rgba(20, 120, 212, 0.14);
+    box-shadow: 0 10px 26px rgba(20, 120, 212, 0.2);
+    transform: translateY(-2px);
 }
 
 .step.is-active .num {
@@ -1270,6 +1276,12 @@ svg {
 
 .booking-panel {
     padding: 34px;
+}
+
+.booking-workflow-focus .booking-panel {
+    border: 1px solid var(--primary-100);
+    border-top: 4px solid var(--primary);
+    box-shadow: 0 18px 44px rgba(20, 120, 212, 0.12);
 }
 
 .booking-panel h2.step-title {
@@ -2117,6 +2129,12 @@ input[type="date"] {
         radial-gradient(800px 400px at 90% 100%, rgba(23, 184, 166, 0.1), transparent 60%);
 }
 
+.auth-page.admin-login-page {
+    background:
+        linear-gradient(rgba(3, 21, 31, 0.42), rgba(3, 21, 31, 0.58)),
+        url("../image/admin.jpg") center / cover no-repeat;
+}
+
 .auth-card {
     width: min(460px, 100%);
     background: var(--white);
@@ -2152,6 +2170,59 @@ input[type="date"] {
 .auth-card form {
     display: grid;
     gap: 18px;
+}
+
+.auth-role-switch {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    padding: 5px;
+    margin: -8px 0 24px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+}
+
+.auth-role-switch a {
+    padding: 10px 12px;
+    border-radius: var(--radius-xs);
+    color: var(--muted);
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    transition: color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.auth-role-switch a:hover {
+    color: var(--primary);
+}
+
+.auth-role-switch a[aria-current="page"] {
+    color: var(--primary-700);
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+}
+
+.auth-context {
+    display: grid;
+    gap: 4px;
+    padding: 14px 16px;
+    margin: -8px 0 22px;
+    border: 1px solid var(--primary-100);
+    border-radius: var(--radius-sm);
+    background: var(--primary-50);
+}
+
+.auth-context strong {
+    color: var(--primary-700);
+    font-family: var(--font-head);
+    font-size: 13px;
+}
+
+.auth-context span {
+    color: var(--muted);
+    font-size: 12.5px;
+    line-height: 1.55;
 }
 
 .auth-features {
@@ -2556,3 +2627,315 @@ footer .clinic-hours strong {
         flex: 1;
     }
 }
+
+/* ============================================================
+   THEME TOGGLE
+   ============================================================ */
+.theme-toggle {
+    width: 42px;
+    height: 42px;
+    border: 1.5px solid var(--line-strong);
+    background: var(--white);
+    color: var(--ink-2);
+    border-radius: 50%;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 16px rgba(20, 120, 212, 0.22);
+}
+
+.theme-toggle svg {
+    transition: transform 0.35s ease;
+}
+
+.theme-toggle:hover svg {
+    transform: rotate(20deg);
+}
+
+[data-theme="light"] .theme-icon-sun { display: none; }
+[data-theme="dark"] .theme-icon-moon { display: none; }
+
+/* ============================================================
+   3D DEPTH EFFECTS
+   ============================================================ */
+.perspective-grid {
+    perspective: 1500px;
+}
+
+.tilt {
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+.tilt > * {
+    transform: translateZ(0);
+}
+
+.tilt .card-icon,
+.tilt .doc-avatar,
+.tilt .dept-icon,
+.tilt .badge,
+.tilt h3,
+.tilt h4,
+.tilt .btn {
+    transform: translateZ(22px);
+}
+
+.btn-primary,
+.btn-appointment {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.28),
+        0 10px 22px rgba(20, 120, 212, 0.3);
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-appointment:hover {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.32),
+        0 14px 30px rgba(20, 120, 212, 0.4);
+}
+
+.stat-box {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.98)),
+        var(--white);
+}
+
+.hero-inner {
+    transform: translateZ(0);
+}
+
+/* Floating decorative orbs in the hero layer */
+.hero-orbs {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.hero-orbs .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(46px);
+    opacity: 0.42;
+    animation: orbFloat 16s ease-in-out infinite;
+    will-change: transform;
+}
+
+.hero-orbs .orb-1 {
+    width: 420px;
+    height: 420px;
+    right: -90px;
+    top: -70px;
+    background: radial-gradient(circle at 30% 30%, rgba(23, 184, 166, 0.55), rgba(23, 184, 166, 0) 70%);
+}
+
+.hero-orbs .orb-2 {
+    width: 360px;
+    height: 360px;
+    left: -80px;
+    bottom: -120px;
+    background: radial-gradient(circle at 60% 60%, rgba(20, 120, 212, 0.5), rgba(20, 120, 212, 0) 70%);
+    animation-delay: -6s;
+}
+
+.hero-orbs .orb-3 {
+    width: 220px;
+    height: 220px;
+    right: 28%;
+    bottom: -60px;
+    background: radial-gradient(circle, rgba(255, 178, 66, 0.45), rgba(255, 178, 66, 0) 70%);
+    animation-delay: -11s;
+}
+
+@keyframes orbFloat {
+    0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+    33% { transform: translateY(-26px) translateX(14px) scale(1.06); }
+    66% { transform: translateY(16px) translateX(-12px) scale(0.96); }
+}
+
+/* 3D card-visual on checkout */
+.card-visual {
+    transform-style: preserve-3d;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 22px 46px rgba(9, 25, 40, 0.45),
+        0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.card-visual .cv-chip-wrap {
+    position: absolute;
+    right: 22px;
+    top: 18px;
+}
+
+/* ============================================================
+   DARK MODE
+   ============================================================ */
+[data-theme="dark"] {
+    color-scheme: dark;
+    --primary: #3fa2ff;
+    --primary-600: #5cb2ff;
+    --primary-700: #8ac6ff;
+    --primary-50: rgba(20, 120, 212, 0.16);
+    --primary-100: rgba(46, 148, 235, 0.3);
+    --accent: #2fd8c3;
+    --accent-50: rgba(47, 216, 195, 0.14);
+    --ink: #eaf2fb;
+    --ink-2: #c3d3e2;
+    --muted: #8da2b6;
+    --line: rgba(148, 163, 184, 0.15);
+    --line-strong: rgba(148, 163, 184, 0.3);
+    --bg: #0a1420;
+    --white: #111d2b;
+    --danger: #ff8192;
+    --danger-50: rgba(255, 129, 146, 0.13);
+    --success: #34d57b;
+    --success-50: rgba(52, 213, 123, 0.14);
+    --warn: #ffbd5c;
+    --warn-50: rgba(255, 189, 92, 0.14);
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 12px 34px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 28px 70px rgba(0, 0, 0, 0.6);
+    --focus: 0 0 0 4px rgba(64, 162, 255, 0.28);
+}
+
+[data-theme="dark"] body {
+    background-color: var(--bg);
+    background-image:
+        linear-gradient(rgba(10, 20, 32, 0.9), rgba(10, 20, 32, 0.9)),
+        url("../images/background.jpg");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+[data-theme="dark"] .topbar {
+    background: rgba(13, 23, 35, 0.9);
+    border-bottom-color: var(--line);
+}
+
+[data-theme="dark"] .navlinks {
+    background: #111d2b;
+}
+
+[data-theme="dark"] .nav-toggle,
+[data-theme="dark"] .theme-toggle {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--ink);
+}
+
+[data-theme="dark"] .medilab-hero {
+    background-image:
+        linear-gradient(95deg,
+            rgba(10, 26, 42, 0.97) 0%,
+            rgba(10, 26, 42, 0.9) 45%,
+            rgba(10, 26, 42, 0.55) 78%,
+            rgba(10, 26, 42, 0.2) 100%);
+}
+
+[data-theme="dark"] .hero-inner h1 { color: #f2f8ff; }
+[data-theme="dark"] .hero-inner p { color: #b6c9db; }
+[data-theme="dark"] .hero-pill {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--line-strong);
+    color: var(--primary-600);
+    box-shadow: var(--shadow-sm);
+}
+
+[data-theme="dark"] .hero-trust div { color: var(--ink-2); }
+
+[data-theme="dark"] .flash { background: #152336; color: var(--ink-2); box-shadow: var(--shadow-lg); }
+
+[data-theme="dark"] .doc-avatar {
+    background: linear-gradient(140deg, var(--primary-50), #15283c);
+    border-color: var(--primary-100);
+}
+
+[data-theme="dark"] .stat-box {
+    background: linear-gradient(180deg, rgba(17, 29, 43, 0.5), rgba(17, 29, 43, 0.98));
+}
+
+[data-theme="dark"] .slot-placeholder {
+    background: rgba(255, 255, 255, 0.02);
+    border-style: dashed;
+}
+
+[data-theme="dark"] .slot-group-label { color: var(--muted); }
+
+[data-theme="dark"] .step .num { background: rgba(255, 255, 255, 0.08); color: var(--muted); }
+[data-theme="dark"] .auth-role-switch { background: rgba(255, 255, 255, 0.03); }
+[data-theme="dark"] .auth-role-switch a[aria-current="page"] { background: var(--white); }
+[data-theme="dark"] .auth-context { background: rgba(63, 162, 255, 0.08); }
+
+[data-theme="dark"] .summary-head {
+    background: linear-gradient(135deg, #0a1a2c 0%, #12304e 100%);
+}
+
+[data-theme="dark"] .summary-head .eyebrow { color: #7fc4ff; }
+
+[data-theme="dark"] .card-visual {
+    background: linear-gradient(135deg, #0a1a2c 0%, #123a5c 60%, #0b4f8d 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 22px 46px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .processing-box { background: #152336; }
+
+[data-theme="dark"] .appointment-card { background: var(--white); }
+
+[data-theme="dark"] .appointment-card.is-pending {
+    background: rgba(255, 189, 92, 0.06);
+    border-color: rgba(255, 189, 92, 0.28);
+}
+
+[data-theme="dark"] .receipt {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--line-strong);
+    color: var(--muted);
+}
+
+[data-theme="dark"] tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+
+[data-theme="dark"] input:disabled,
+[data-theme="dark"] select:disabled { background: rgba(255, 255, 255, 0.04); color: var(--muted); }
+
+[data-theme="dark"] .badge-muted { background: rgba(255, 255, 255, 0.08); color: var(--muted); }
+
+[data-theme="dark"] .hold-note {
+    background: rgba(255, 189, 92, 0.1);
+    border-color: rgba(255, 189, 92, 0.3);
+    color: #e8b45d;
+}
+
+[data-theme="dark"] .test-hint {
+    background: rgba(255, 189, 92, 0.1);
+    border-color: rgba(255, 189, 92, 0.3);
+    color: #e8b45d;
+}
+
+[data-theme="dark"] .hero-orbs .orb { opacity: 0.34; }
+
+[data-theme="dark"] .top-contact-bar { background: linear-gradient(90deg, #0a2436, #113a58); }
+
+/* Scrollbar */
+[data-theme="dark"] ::-webkit-scrollbar { width: 11px; height: 11px; }
+[data-theme="dark"] ::-webkit-scrollbar-track { background: #0a1420; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: #223952;
+    border-radius: 8px;
+    border: 2px solid #0a1420;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #2d4d6b; }

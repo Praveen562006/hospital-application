@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ role|title }} Login - MediCare Hospital{% endblock %}
+{% block title %}{{ role|title }} Login - Psmhealthcare{% endblock %}
 
 {% block content %}
-<div class="auth-page">
+<div class="auth-page{% if role == 'admin' %} admin-login-page{% endif %}">
     <div class="auth-card">
         <div class="auth-icon">
             <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -12,12 +12,23 @@
             </svg>
         </div>
         <span class="eyebrow">{{ role|upper }} PORTAL</span>
-        <h1>Welcome back</h1>
-        <p>Sign in to manage your healthcare appointments and payments.</p>
+        <h1>{% if role == 'admin' %}Admin sign in{% else %}Welcome back{% endif %}</h1>
+        <p>
+            {% if role == 'admin' %}
+                Sign in to manage clinicians, departments and patient appointments.
+            {% else %}
+                Sign in to book consultations, manage appointments and view payments.
+            {% endif %}
+        </p>
+
+        <nav class="auth-role-switch" aria-label="Choose sign-in portal">
+            <a href="{{ url_for('login', role='patient') }}" {% if role == 'patient' %}aria-current="page"{% endif %}>Patient</a>
+            <a href="{{ url_for('login', role='admin') }}" {% if role == 'admin' %}aria-current="page"{% endif %}>Administrator</a>
+        </nav>
 
         <form method="post" action="{{ url_for('login', role=role) }}" id="login-form">
             <label for="username">
-                Username
+                {{ 'Administrator username' if role == 'admin' else 'Patient username' }}
                 <input
                     type="text"
                     id="username"
@@ -30,7 +41,7 @@
             </label>
 
             <label for="password">
-                Password
+                {{ 'Administrator password' if role == 'admin' else 'Password' }}
                 <input
                     type="password"
                     id="password"
@@ -42,23 +53,20 @@
             </label>
 
             <button type="submit" class="btn btn-primary full" id="login-submit">
-                Sign in to Medilab
+                {{ 'Sign in to admin portal' if role == 'admin' else 'Sign in to patient portal' }}
             </button>
         </form>
 
         <ul class="auth-features">
-            <li>
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Book appointments in under a minute
-            </li>
-            <li>
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Pay securely online - card, UPI or net banking
-            </li>
-            <li>
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Free cancellation with full refund
-            </li>
+            {% if role == 'admin' %}
+                <li><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Manage departments and clinician listings</li>
+                <li><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Review bookings and payment status</li>
+                <li><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Administrator access is restricted</li>
+            {% else %}
+                <li><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Book appointments with available specialists</li>
+                <li><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Pay securely online by card, UPI or net banking</li>
+                <li><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Manage or cancel your upcoming visits</li>
+            {% endif %}
         </ul>
 
         {% if role == 'patient' %}
@@ -69,9 +77,7 @@
                 <span>Demo: <strong>berk</strong> / <strong>berk</strong></span>
             </div>
         {% else %}
-            <p class="auth-link">
-                Looking for patient login? <a href="{{ url_for('login', role='patient') }}">Patient portal</a>
-            </p>
+            <p class="auth-link">Patient accounts are available through the <a href="{{ url_for('login', role='patient') }}">patient portal</a>.</p>
             <div class="demo-credentials">
                 <span>Demo: <strong>admin</strong> / <strong>admin</strong></span>
             </div>

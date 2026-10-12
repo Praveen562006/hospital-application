@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}All Appointments - MediCare Hospital{% endblock %}
+{% block title %}All Appointments - Psmhealthcare{% endblock %}
 
 {% block content %}
 <section class="dashboard-head">
@@ -36,17 +36,17 @@
                                 <span class="badge badge-warn">Unpaid hold</span>
                             {% elif a.reference %}
                                 <span class="badge badge-success">
-                                    {{ currency_symbol }}{{ a.amount }} · {{ a.method }}
-                                    {% if a.card_last4 %}(••{{ a.card_last4 }}){% endif %}
+                                    {{ currency_symbol }}{{ a.amount }} | {{ a.method }}
+                                    {% if a.card_last4 %}(**{{ a.card_last4 }}){% endif %}
                                 </span><br>
                                 <small class="muted">{{ a.reference }}</small>
                             {% else %}
-                                <span class="badge badge-muted">No payment record</span>
+                                <span class="badge badge-muted">Pay at clinic</span>
                             {% endif %}
                         </td>
                         <td>
                             <form method="post" action="{{ url_for('admin_cancel_appointment', appointment_id=a.id) }}">
-                                <button class="btn btn-danger-outline btn-sm" onclick="return confirm('Remove this appointment{% if a.status == 'confirmed' %} and trigger a refund{% endif %}?')">
+                                <button class="btn btn-danger-outline btn-sm" onclick="return confirm('Remove this appointment{% if a.reference %} and trigger a refund{% endif %}?')">
                                     Remove
                                 </button>
                             </form>

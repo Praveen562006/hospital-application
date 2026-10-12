@@ -1,5 +1,5 @@
 /**
- * Medilab Hospital Application - Client Script
+ * Psmhealthcare Application - Client Script
  * Flash alerts, mobile nav, booking wizard, payment checkout
  */
 
@@ -17,6 +17,47 @@ document.addEventListener("DOMContentLoaded", function () {
         flash.addEventListener("click", dismiss);
         setTimeout(dismiss, 6000);
     });
+
+    // ====================================================
+    // THEME TOGGLE (dark / light)
+    // ====================================================
+    const themeToggle = document.getElementById("themeToggle");
+    if (themeToggle) {
+        themeToggle.addEventListener("click", () => {
+            const current = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+            document.documentElement.setAttribute("data-theme", current);
+            localStorage.setItem("Psmhealthcarehealthcare-theme", current);
+        });
+    }
+
+    // ====================================================
+    // 3D TILT EFFECT
+    // ====================================================
+    function initTilt() {
+        const cards = document.querySelectorAll("[data-tilt]");
+        if (!cards.length || window.matchMedia("(hover: none)").matches) return;
+        const max = 10;
+
+        cards.forEach(card => {
+            card.addEventListener("mouseenter", () => {
+                card.style.transition = "transform 0.12s ease-out, box-shadow 0.3s ease";
+            });
+            card.addEventListener("mousemove", (e) => {
+                const rect = card.getBoundingClientRect();
+                const px = (e.clientX - rect.left) / rect.width;
+                const py = (e.clientY - rect.top) / rect.height;
+                const rx = (0.5 - py) * max;
+                const ry = (px - 0.5) * max;
+                card.style.transform =
+                    `rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) translateY(-6px) scale(1.015)`;
+            });
+            card.addEventListener("mouseleave", () => {
+                card.style.transition = "transform 0.4s ease, box-shadow 0.4s ease";
+                card.style.transform = "";
+            });
+        });
+    }
+    initTilt();
 
     // ====================================================
     // MOBILE NAVIGATION
@@ -60,6 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const slots = document.getElementById("slots");
     const appointmentTime = document.getElementById("appointmentTime");
     const bookButton = document.getElementById("bookButton");
+    const bookLaterButton = document.getElementById("bookLaterButton");
     const slotStatus = document.getElementById("slotStatus");
     const bookingForm = document.getElementById("bookingForm");
 
@@ -68,6 +110,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const stepNodes = Array.from(document.querySelectorAll("#stepper .step"));
         const timePreview = document.getElementById("selectedTimePreview");
         let currentStep = 1;
+        let availabilityRequest = 0;
+        const setBookingButtonsDisabled = disabled => {
+            if (bookButton) bookButton.disabled = disabled;
+            if (bookLaterButton) bookLaterButton.disabled = disabled;
+        };
 
         const setText = (id, value) => {
             const node = document.getElementById(id);
@@ -120,6 +167,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 const n = Number(node.dataset.step);
                 node.classList.toggle("is-active", n === step);
                 node.classList.toggle("is-done", n < step);
+                if (n === step) node.setAttribute("aria-current", "step");
+                else node.removeAttribute("aria-current");
                 const num = node.querySelector(".num");
                 if (num) num.textContent = n < step ? "✓" : String(n);
             });
@@ -156,7 +205,10 @@ document.addEventListener("DOMContentLoaded", function () {
             doctor.innerHTML = '<option value="">Loading doctors...</option>';
             doctor.disabled = true;
             if (appointmentTime) appointmentTime.value = "";
-            if (bookButton) bookButton.disabled = true;
+            if (timePreview) timePreview.value = "";
+            setBookingButtonsDisabled(true);
+            const step3Btn = document.getElementById("toStep3");
+            if (step3Btn) step3Btn.disabled = true;
             slotPlaceholder("Select a doctor and date to see available times.", false);
             if (slotStatus) slotStatus.textContent = "Select a doctor and date";
             const step2Btn = document.getElementById("toStep2");
@@ -193,7 +245,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const step2Btn = document.getElementById("toStep2");
             if (step2Btn) step2Btn.disabled = !step1Ready();
             if (appointmentTime) appointmentTime.value = "";
-            if (bookButton) bookButton.disabled = true;
+            if (timePreview) timePreview.value = "";
+            setBookingButtonsDisabled(true);
             const step3Btn = document.getElementById("toStep3");
             if (step3Btn) step3Btn.disabled = true;
             syncSummary();
@@ -203,7 +256,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (appointmentDate) {
             appointmentDate.addEventListener("change", function () {
                 if (appointmentTime) appointmentTime.value = "";
-                if (bookButton) bookButton.disabled = true;
+                if (timePreview) timePreview.value = "";
+                setBookingButtonsDisabled(true);
                 const step3Btn = document.getElementById("toStep3");
                 if (step3Btn) step3Btn.disabled = true;
                 syncSummary();
@@ -236,12 +290,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 button.className = "slot";
                 button.textContent = slot.label;
                 button.dataset.value = slot.value;
+                if (appointmentTime.value === slot.value) {
+                    button.classList.add("selected");
+                }
                 button.addEventListener("click", () => {
                     slots.querySelectorAll(".slot").forEach(btn => btn.classList.remove("selected"));
                     button.classList.add("selected");
                     appointmentTime.value = slot.value;
                     if (timePreview) timePreview.value = slot.label;
-                    if (bookButton) bookButton.disabled = false;
+                    setBookingButtonsDisabled(false);
                     const step3Btn = document.getElementById("toStep3");
                     if (step3Btn) step3Btn.disabled = false;
                     syncSummary();
@@ -251,11 +308,12 @@ document.addEventListener("DOMContentLoaded", function () {
             slots.appendChild(grid);
         }
 
-        async function loadAvailability() {
+        async function loadAvailability(silent = false) {
             const doctorId = doctor.value;
             const selectedDate = appointmentDate ? appointmentDate.value : "";
 
             if (!doctorId || !selectedDate) {
+                availabilityRequest += 1;
                 slotPlaceholder("Select a doctor and date to see available times.", false);
                 if (slotStatus) slotStatus.textContent = "Select a doctor and date";
                 return;
@@ -268,25 +326,56 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            if (slotStatus) slotStatus.textContent = "Checking live availability...";
-            slotPlaceholder("Checking available 30-minute consultation slots...", false);
+            if (!silent) {
+                if (slotStatus) slotStatus.textContent = "Checking live availability...";
+                slotPlaceholder("Checking available 30-minute consultation slots...", false);
+            }
+            const requestId = ++availabilityRequest;
 
             try {
                 const response = await fetch(
-                    `/api/availability?doctor_id=${encodeURIComponent(doctorId)}&date=${encodeURIComponent(selectedDate)}`
+                    `/api/availability?doctor_id=${encodeURIComponent(doctorId)}&date=${encodeURIComponent(selectedDate)}`,
+                    { cache: "no-store" }
                 );
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || "Server error fetching availability.");
+                if (requestId !== availabilityRequest) return;
 
                 if (!data.slots || data.slots.length === 0) {
+                    const selectionWasLost = Boolean(appointmentTime.value);
+                    appointmentTime.value = "";
+                    if (timePreview) timePreview.value = "";
+                    setBookingButtonsDisabled(true);
+                    const step3Btn = document.getElementById("toStep3");
+                    if (step3Btn) step3Btn.disabled = true;
                     slotPlaceholder("No open slots on this date. Try another day.", false);
-                    if (slotStatus) slotStatus.textContent = "No availability";
+                    if (slotStatus) {
+                        slotStatus.textContent = selectionWasLost
+                            ? "Your selected time was just booked. No availability remains."
+                            : "No availability";
+                    }
+                    if (selectionWasLost && currentStep > 2) goToStep(2);
+                    syncSummary();
                     return;
                 }
 
-                if (slotStatus) {
-                    slotStatus.textContent = `${data.slots.length} slot${data.slots.length > 1 ? "s" : ""} available`;
+                const selectedStillAvailable = data.slots.some(slot => slot.value === appointmentTime.value);
+                const selectionWasLost = Boolean(appointmentTime.value) && !selectedStillAvailable;
+                if (selectionWasLost) {
+                    appointmentTime.value = "";
+                    if (timePreview) timePreview.value = "";
+                    syncSummary();
+                    if (currentStep > 2) goToStep(2);
                 }
+
+                if (slotStatus) {
+                    slotStatus.textContent = selectionWasLost
+                        ? "Your selected time was just booked. Choose another available time."
+                        : `${data.slots.length} slot${data.slots.length > 1 ? "s" : ""} available`;
+                }
+                setBookingButtonsDisabled(!appointmentTime.value);
+                const step3Btn = document.getElementById("toStep3");
+                if (step3Btn) step3Btn.disabled = !appointmentTime.value;
 
                 const morning = data.slots.filter(s => s.value.slice(11, 16) < "12:00");
                 const afternoon = data.slots.filter(s => s.value.slice(11, 16) >= "12:00");
@@ -302,11 +391,26 @@ document.addEventListener("DOMContentLoaded", function () {
                         '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 18a5 5 0 0 0-10 0"></path><line x1="12" y1="2" x2="12" y2="9"></line><line x1="4.2" y1="10.2" x2="5.6" y2="11.6"></line><line x1="1" y1="18" x2="3" y2="18"></line><line x1="21" y1="18" x2="23" y2="18"></line><line x1="18.4" y1="11.6" x2="19.8" y2="10.2"></line><line x1="23" y1="22" x2="1" y2="22"></line></svg>');
                 }
             } catch (error) {
+                if (requestId !== availabilityRequest) return;
                 console.error("Availability error:", error);
                 slotPlaceholder("Unable to check availability right now. Please try again.", true);
                 if (slotStatus) slotStatus.textContent = "Error checking availability";
+                setBookingButtonsDisabled(true);
+                const step3Btn = document.getElementById("toStep3");
+                if (step3Btn) step3Btn.disabled = true;
+                if (currentStep > 2) goToStep(2);
             }
         }
+
+        window.setInterval(() => {
+            if (!document.hidden && doctor.value && appointmentDate && appointmentDate.value) {
+                loadAvailability(true);
+            }
+        }, 10000);
+        window.addEventListener("focus", () => loadAvailability(true));
+        document.addEventListener("visibilitychange", () => {
+            if (!document.hidden) loadAvailability(true);
+        });
 
         bookingForm.addEventListener("submit", (e) => {
             if (!step1Ready() || !step2Ready()) {
@@ -314,10 +418,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 goToStep(step1Ready() ? 2 : 1);
                 return;
             }
+            const paymentChoice = document.getElementById("paymentChoice");
+            if (paymentChoice && e.submitter && e.submitter.dataset.paymentChoice) {
+                paymentChoice.value = e.submitter.dataset.paymentChoice;
+            }
             if (bookButton) {
                 bookButton.disabled = true;
-                bookButton.textContent = "Reserving your slot...";
+                bookButton.textContent = paymentChoice && paymentChoice.value === "pay_later"
+                    ? "Confirming appointment..."
+                    : "Reserving your slot...";
             }
+            if (bookLaterButton) bookLaterButton.disabled = true;
         });
 
         syncSummary();

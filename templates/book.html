@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}Book an Appointment - Medilab{% endblock %}
+{% block title %}Book an Appointment - Psmhealthcare{% endblock %}
 
 {% block content %}
+<div class="appointment-booking-page">
 <section class="dashboard-head">
     <div>
         <span class="eyebrow">APPOINTMENT BOOKING</span>
         <h1>Book a consultation in 3 steps</h1>
-        <p>Pick your specialist, choose an open 30-minute slot, then pay securely to confirm. Your slot is held for {{ hold_minutes }} minutes.</p>
+        <p>Pick your specialist and an open 30-minute slot. Pay online now or choose to pay at the clinic.</p>
     </div>
     <div class="hero-actions">
         <a class="btn btn-ghost" href="{{ url_for('patient_dashboard') }}">My appointments</a>
@@ -15,8 +16,8 @@
 </section>
 
 <!-- Progress stepper -->
-<div class="stepper" id="stepper">
-    <div class="step is-active" data-step="1">
+<div class="stepper" id="stepper" aria-label="Appointment booking steps">
+    <div class="step is-active" data-step="1" aria-current="step">
         <span class="num">1</span>
         <span>Specialist <small>Department & doctor</small></span>
     </div>
@@ -28,13 +29,13 @@
     <div class="step-connector"></div>
     <div class="step" data-step="3">
         <span class="num">3</span>
-        <span>Review & pay <small>Confirm booking</small></span>
+        <span>Review <small>Confirm booking</small></span>
     </div>
 </div>
 
 <div class="booking-layout">
 
-    <div class="booking-main">
+    <div class="booking-main booking-workflow-focus">
         <form method="POST" action="{{ url_for('book_appointment') }}" id="bookingForm" class="panel booking-panel">
 
             <!-- STEP 1: Specialist -->
@@ -68,7 +69,7 @@
                         <line x1="12" y1="8" x2="12" y2="12"></line>
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
                     </svg>
-                    Consultations last 30 minutes and run Monday to Saturday, 9:00 AM to 5:00 PM. The consultation fee is {{ currency_symbol }}{{ consultation_fee }}, payable online to confirm your slot.
+                    Consultations last 30 minutes and run Monday to Saturday, 9:00 AM to 5:00 PM. The {{ currency_symbol }}{{ consultation_fee }} fee can be paid online now or at the clinic.
                 </div>
 
                 <div class="wizard-actions">
@@ -109,7 +110,7 @@
                     <div class="slot-legend">
                         <span><i class="dot free"></i> Available</span>
                         <span><i class="dot picked"></i> Selected</span>
-                        <span id="slotStatus" class="muted">Select a doctor and date</span>
+                        <span id="slotStatus" class="muted" role="status" aria-live="polite">Select a doctor and date</span>
                     </div>
                 </div>
 
@@ -145,7 +146,7 @@
             <div class="step-panel" data-panel="3">
                 <span class="eyebrow">STEP 3 OF 3</span>
                 <h2 class="step-title">Review and confirm</h2>
-                <p class="step-lead">Check your booking details. You will continue to secure payment to lock in this slot.</p>
+                <p class="step-lead">Check your booking details, then choose whether to pay online now or at the clinic.</p>
 
                 <div class="review-grid">
                     <div class="review-item">
@@ -175,9 +176,10 @@
                     <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                     </svg>
-                    Your slot is reserved for {{ hold_minutes }} minutes. If payment is not completed in time, the slot is released back to other patients.
+                    Your appointment will be confirmed immediately. Online payment is optional; you can pay the {{ currency_symbol }}{{ consultation_fee }} fee at the clinic.
                 </div>
 
+                <input type="hidden" id="paymentChoice" name="payment_choice" value="pay_online">
                 <div class="wizard-actions">
                     <button class="btn btn-ghost" type="button" data-back="2">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -187,12 +189,15 @@
                         Back
                     </button>
                     <div class="right">
-                        <button class="btn btn-primary btn-lg" type="submit" id="bookButton" disabled>
+                        <button class="btn btn-primary btn-lg" type="submit" id="bookButton" data-payment-choice="pay_online" disabled>
                             <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="2" y="5" width="20" height="14" rx="2"></rect>
                                 <line x1="2" y1="10" x2="22" y2="10"></line>
                             </svg>
-                            Continue to payment · {{ currency_symbol }}{{ consultation_fee }}
+                            Pay online now
+                        </button>
+                        <button class="btn btn-ghost" type="submit" id="bookLaterButton" data-payment-choice="pay_later" disabled>
+                            Pay at clinic
                         </button>
                     </div>
                 </div>
@@ -230,7 +235,7 @@
                 </div>
 
                 <div class="total-row">
-                    <span>Total due today</span>
+                    <span>Consultation fee</span>
                     <strong>{{ currency_symbol }}{{ consultation_fee }}</strong>
                 </div>
 
@@ -239,7 +244,7 @@
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                     </svg>
-                    Secure online payment. Cards, UPI and net banking are accepted.
+                    Online payment is optional. Pay now by card, UPI or net banking, or pay at the clinic.
                 </div>
             </div>
         </div>
@@ -283,5 +288,6 @@
             </div>
         </div>
     </aside>
+</div>
 </div>
 {% endblock %}

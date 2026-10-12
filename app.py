@@ -1,7 +1,7 @@
 import os
 import sqlite3
 import hashlib
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, date, time, timedelta, timezone
 from functools import wraps
 
 from flask import (
@@ -33,12 +33,12 @@ WORKING_DAYS = {0, 1, 2, 3, 4, 5}  # Monday (0) - Saturday (5)
 # ============================================================
 CONSULTATION_FEE = 500
 CURRENCY = "INR"
-CURRENCY_SYMBOL = "₹"
+CURRENCY_SYMBOL = "?"
 PAYMENT_HOLD_MINUTES = 10  # unpaid bookings are released after this
 TEST_DECLINE_CARD = "4000000000000002"  # demo card that always declines
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "medilab-secure-hospital-key-2026")
+app.secret_key = os.environ.get("SECRET_KEY", "psmhealthcare-secure-hospital-key-2026")
 app.config["JSON_SORT_KEYS"] = False
 app.url_map.strict_slashes = False
 
@@ -258,7 +258,7 @@ def expiry_valid(expiry):
 def expire_stale_holds():
     """Release unpaid bookings so their slots return to the pool."""
     cutoff = (
-        datetime.utcnow() - timedelta(minutes=PAYMENT_HOLD_MINUTES)
+        datetime.now(timezone.utc) - timedelta(minutes=PAYMENT_HOLD_MINUTES)
     ).strftime("%Y-%m-%d %H:%M:%S")
     connection = db()
     connection.execute(
@@ -426,7 +426,7 @@ def signup():
                     "username": username,
                     "role": "patient"
                 }
-                flash("Account created successfully! Welcome to Medilab.", "success")
+                flash("Account created successfully! Welcome to Psmhealthcare.", "success")
                 return redirect(url_for("patient_dashboard"))
             except sqlite3.IntegrityError:
                 flash("That username is already registered. Please choose another.", "error")
@@ -525,14 +525,20 @@ def book_appointment():
         flash("That appointment slot is no longer available. Please select another time.", "error")
         return redirect(url_for("book"))
 
+    payment_choice = request.form.get("payment_choice", "pay_online")
+    if payment_choice not in ("pay_online", "pay_later"):
+        flash("Please choose whether to pay online or at the clinic.", "error")
+        return redirect(url_for("book"))
+
+    appointment_status = "confirmed" if payment_choice == "pay_later" else "pending"
     connection = db()
     try:
         cur = connection.execute(
             """
             INSERT INTO appointments (appointment_time, doctor_id, patient_id, status)
-            VALUES (?, ?, ?, 'pending')
+            VALUES (?, ?, ?, ?)
             """,
-            (requested_val, doctor_id, session["user"]["id"])
+            (requested_val, doctor_id, session["user"]["id"], appointment_status)
         )
         appointment_id = cur.lastrowid
         connection.commit()
@@ -544,7 +550,14 @@ def book_appointment():
     finally:
         connection.close()
 
-    # Slot is held for a limited time - complete payment to confirm it
+    if payment_choice == "pay_later":
+        flash(
+            "Appointment confirmed. You can pay the consultation fee at the clinic "
+            "or pay online later from your appointments.",
+            "success"
+        )
+        return redirect(url_for("patient_dashboard"))
+
     return redirect(url_for("payment_checkout", appointment_id=appointment_id))
 
 
@@ -577,10 +590,11 @@ def payment_checkout(appointment_id):
     connection = db()
     row = connection.execute("""
         SELECT a.id, a.appointment_time, a.status, a.patient_id,
-               d.name AS doctor, b.name AS branch
+               d.name AS doctor, b.name AS branch, pay.reference
         FROM appointments a
         JOIN doctors d ON d.id = a.doctor_id
         JOIN branches b ON b.id = d.branch_id
+        LEFT JOIN payments pay ON pay.appointment_id = a.id
         WHERE a.id = ?
     """, (appointment_id,)).fetchone()
     connection.close()
@@ -588,9 +602,11 @@ def payment_checkout(appointment_id):
     if not row or row["patient_id"] != session["user"]["id"]:
         abort(404)
 
-    if row["status"] != "pending":
+    if row["reference"]:
         flash("This appointment is already paid for.", "success")
         return redirect(url_for("patient_dashboard"))
+    if row["status"] not in ("pending", "confirmed"):
+        abort(404)
 
     return render_template("payment.html", appointment=row)
 
@@ -598,14 +614,16 @@ def payment_checkout(appointment_id):
 @app.route("/payment/<int:appointment_id>/pay", methods=["POST"])
 @login_required("patient")
 def payment_process(appointment_id):
+    expire_stale_holds()
     connection = db()
     appointment = connection.execute(
         """
         SELECT a.id, a.appointment_time, a.status, a.patient_id,
-               d.name AS doctor, b.name AS branch
+               d.name AS doctor, b.name AS branch, pay.reference
         FROM appointments a
         JOIN doctors d ON d.id = a.doctor_id
         JOIN branches b ON b.id = d.branch_id
+        LEFT JOIN payments pay ON pay.appointment_id = a.id
         WHERE a.id = ?
         """,
         (appointment_id,)
@@ -615,10 +633,13 @@ def payment_process(appointment_id):
         connection.close()
         abort(404)
 
-    if appointment["status"] != "pending":
+    if appointment["reference"]:
         connection.close()
         flash("This appointment is already paid for.", "success")
         return redirect(url_for("patient_dashboard"))
+    if appointment["status"] not in ("pending", "confirmed"):
+        connection.close()
+        abort(404)
 
     method = request.form.get("method", "card")
     card_name = request.form.get("card_name", "").strip()
@@ -705,7 +726,12 @@ def cancel_appointment(appointment_id):
     connection = db()
     now_iso = datetime.now().isoformat(timespec="minutes")
     row = connection.execute(
-        "SELECT status FROM appointments WHERE id = ? AND patient_id = ? AND appointment_time >= ?",
+        """
+        SELECT a.status, pay.reference
+        FROM appointments a
+        LEFT JOIN payments pay ON pay.appointment_id = a.id
+        WHERE a.id = ? AND a.patient_id = ? AND a.appointment_time >= ?
+        """,
         (appointment_id, session["user"]["id"], now_iso)
     ).fetchone()
 
@@ -714,7 +740,7 @@ def cancel_appointment(appointment_id):
         flash("Appointment could not be cancelled.", "error")
         return redirect(url_for("patient_dashboard"))
 
-    paid = row["status"] == "confirmed"
+    paid = row["reference"] is not None
     connection.execute(
         "DELETE FROM appointments WHERE id = ? AND patient_id = ?",
         (appointment_id, session["user"]["id"])
@@ -875,13 +901,19 @@ def admin_appointments():
 def admin_cancel_appointment(appointment_id):
     connection = db()
     row = connection.execute(
-        "SELECT status FROM appointments WHERE id = ?", (appointment_id,)
+        """
+        SELECT a.status, pay.reference
+        FROM appointments a
+        LEFT JOIN payments pay ON pay.appointment_id = a.id
+        WHERE a.id = ?
+        """,
+        (appointment_id,)
     ).fetchone()
     connection.execute("DELETE FROM appointments WHERE id = ?", (appointment_id,))
     connection.commit()
     connection.close()
 
-    if row and row["status"] == "confirmed":
+    if row and row["reference"]:
         flash(f"Appointment removed. {CURRENCY_SYMBOL}{CONSULTATION_FEE} refund due to the patient.", "success")
     else:
         flash("Appointment cancelled and removed.", "success")
@@ -931,9 +963,11 @@ def api_availability():
             "error": "Doctor and date are required."
         }), 400
 
-    return jsonify({
+    response = jsonify({
         "slots": available_slots(doctor_id, selected_date)
     })
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+    return response
 
 
 # ============================================================
@@ -944,7 +978,7 @@ init_db()
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8085))
     print(f"\n=======================================================")
-    print(f" Medilab Hospital System Running!")
+    print(f"Psmhealthcare System Running!")
     print(f" Open your browser: http://127.0.0.1:{port}")
     print(f"=======================================================\n")
     app.run(host="0.0.0.0", port=port, debug=True)

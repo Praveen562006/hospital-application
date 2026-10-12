@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Patient Dashboard - MediCare Hospital{% endblock %}
+{% block title %}Patient Dashboard - Psmhealthcare{% endblock %}
 
 {% block content %}
 <section class="dashboard-head">
@@ -55,34 +55,36 @@
                             <span class="badge">{{ a.branch }}</span>
                             {% if a.status == 'pending' %}
                                 <span class="badge badge-warn">Awaiting payment</span>
-                            {% else %}
+                            {% elif a.reference %}
                                 <span class="badge badge-success">
                                     <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     Paid
                                 </span>
+                            {% else %}
+                                <span class="badge badge-muted">Pay at clinic</span>
                             {% endif %}
                         </div>
                         <h3>Dr. {{ a.doctor }}</h3>
-                        <p>{{ a.appointment_time[11:16] }} · 30 minute consultation</p>
+                        <p>{{ a.appointment_time[11:16] }} | 30 minute consultation</p>
                     </div>
 
                     <div class="appt-meta">
-                        {% if a.status == 'confirmed' %}
+                        {% if a.reference %}
                             <span class="receipt">
                                 {{ currency_symbol }}{{ a.amount if a.amount else consultation_fee }}
-                                · {{ a.reference }}
-                                {% if a.method == 'card' and a.card_brand %}({{ a.card_brand }} ••{{ a.card_last4 }}){% endif %}
+                                | {{ a.reference }}
+                                {% if a.method == 'card' and a.card_brand %}({{ a.card_brand }} **{{ a.card_last4 }}){% endif %}
                             </span>
                         {% endif %}
                     </div>
 
                     <div class="appt-actions">
-                        {% if a.status == 'pending' %}
+                        {% if a.status == 'pending' or not a.reference %}
                             <a class="btn btn-primary btn-sm" href="{{ url_for('payment_checkout', appointment_id=a.id) }}">
                                 Pay {{ currency_symbol }}{{ consultation_fee }}
                             </a>
                         {% endif %}
-                        <form method="post" action="{{ url_for('cancel_appointment', appointment_id=a.id) }}" onsubmit="return confirm('Cancel this {% if a.status == 'confirmed' %}appointment{% else %}booking{% endif %}?{% if a.status == 'confirmed' %} Your fee will be refunded.{% endif %}')">
+                        <form method="post" action="{{ url_for('cancel_appointment', appointment_id=a.id) }}" onsubmit="return confirm('Cancel this {% if a.status == 'confirmed' %}appointment{% else %}booking{% endif %}?{% if a.reference %} Your fee will be refunded.{% endif %}')">
                             <button class="btn btn-danger-outline">Cancel</button>
                         </form>
                     </div>
@@ -100,7 +102,7 @@
                 </svg>
             </div>
             <h3>No upcoming appointments</h3>
-            <p>Choose a specialist and see available times. Pay online and get confirmed instantly.</p>
+            <p>Choose a specialist and see available times. Pay online now or at the clinic.</p>
             <a class="btn btn-primary" href="{{ url_for('book') }}">Book your first appointment</a>
         </div>
     {% endif %}

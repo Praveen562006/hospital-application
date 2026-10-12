@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Patient Registration - MediCare Hospital{% endblock %}
+{% block title %}Patient Registration - Psmhealthcare{% endblock %}
 
 {% block content %}
 <div class="auth-page">
@@ -14,8 +14,13 @@
             </svg>
         </div>
         <span class="eyebrow">PATIENT REGISTRATION</span>
-        <h1>Create your account</h1>
-        <p>Book, pay for and manage consultations all in one place.</p>
+        <h1>Create your patient account</h1>
+        <p>One account to book consultations, complete payment and keep track of your visits.</p>
+
+        <div class="auth-context">
+            <strong>Quick and secure setup</strong>
+            <span>Choose a username with at least 3 characters and a password with at least 4.</span>
+        </div>
 
         <form method="post" action="{{ url_for('signup') }}" id="signup-form">
             <label for="username">
@@ -64,7 +69,7 @@
         </form>
 
         <p class="auth-link">
-            Already registered? <a href="{{ url_for('login', role='patient') }}">Sign in</a>
+            Already have a patient account? <a href="{{ url_for('login', role='patient') }}">Sign in</a>
         </p>
     </div>
 </div>
