@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Dr. {{ doc.name }} - {{ doc.branch }} | Psmhealthcare{% endblock %}
+{% block content %}
+<div class="breadcrumb"><a href="{{ url_for('index') }}">Home</a> / <a href="{{ url_for('doctors_page') }}">Doctors</a> / <span>Dr. {{ doc.name }}</span></div>
+
+<section class="doc-hero">
+    <div class="doc-hero-card">
+        <div class="doc-photo xl p-{{ (doc.id % 6) + 1 }}">{{ doc.name[0] }}{{ doc.name.split(' ')[-1][0] if ' ' in doc.name else '' }}</div>
+        <div class="doc-hero-info">
+            <div class="doc-badges"><span class="badge">{{ doc.branch }}</span><span class="rating-chip big">★ {{ '%.1f'|format(doc.rating or 4.8) }} · trusted</span></div>
+            <h1>Dr. {{ doc.name }}</h1>
+            <p class="doc-qual-lg">{{ doc.qualification or 'MBBS, MD' }}</p>
+            <p class="muted">{{ doc.experience or 5 }}+ years experience · Speaks {{ doc.languages or 'English, Hindi' }}</p>
+            <div class="doc-facts">
+                <div><span>Consultation fee</span><strong>{{ currency_symbol }}{{ doc.fee if doc.fee is not none else consultation_fee }}</strong></div>
+                <div><span>Duration</span><strong>30 min</strong></div>
+                <div><span>Days</span><strong>Mon – Sat</strong></div>
+                <div><span>Time</span><strong>9 AM – 5 PM</strong></div>
+            </div>
+            <div class="hero-btns">
+                <a class="btn btn-primary btn-lg" href="{{ url_for('book') }}">Book this doctor</a>
+                <a class="btn btn-ghost" href="{{ url_for('doctors_page') }}?dept={{ doc.branch_id }}">More {{ doc.branch }} doctors</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section doc-cols">
+    <div>
+        <div class="panel">
+            <div class="panel-head"><h2>About Dr. {{ doc.name.split(' ')[-1] }}</h2></div>
+            <p>{{ doc.bio or 'Experienced clinician providing evidence-based, patient-first care with clear treatment plans and friendly follow-up.' }}</p>
+            <div class="review-grid" style="margin-top:18px">
+                <div class="review-item"><span>Qualification</span><strong>{{ doc.qualification or 'MBBS, MD' }}</strong></div>
+                <div class="review-item"><span>Experience</span><strong>{{ doc.experience or 5 }}+ years</strong></div>
+                <div class="review-item"><span>Languages</span><strong>{{ doc.languages or 'English, Hindi' }}</strong></div>
+                <div class="review-item"><span>Department</span><strong>{{ doc.branch }}</strong></div>
+            </div>
+        </div>
+
+        <div class="panel" style="margin-top:20px">
+            <div class="panel-head"><h2>Next availability</h2><a class="text-link" href="{{ url_for('book') }}">Book →</a></div>
+            {% if upcoming_preview %}
+            <div class="avail-list">
+                {% for d in upcoming_preview %}
+                <div class="avail-row"><span><strong>{{ d.date.strftime('%a, %d %b') }}</strong></span><span class="badge badge-success">{{ d.count }} slots open</span></div>
+                {% endfor %}
+            </div>
+            {% else %}<p class="muted">No open slots in the next 7 days — please try another doctor or date.</p>{% endif %}
+        </div>
+
+        <div class="panel" style="margin-top:20px">
+            <div class="panel-head"><h2>Patient reviews</h2><a class="text-link" href="{{ url_for('reviews_page') }}">Write one →</a></div>
+            {% for r in doc_reviews %}
+            <div class="review-card"><div class="stars">{% for i in range(r.rating) %}★{% endfor %}</div><h4>"{{ r.title }}"</h4><p>{{ r.comment }}</p><div class="reviewer"><span class="review-avatar">{{ r.name[0] }}</span><span><strong>{{ r.name }}</strong></span></div></div>
+            {% else %}
+            {% for r in all_reviews %}
+            <div class="review-card"><div class="stars">★★★★★</div><h4>"{{ r.title }}"</h4><p>{{ r.comment[:140] }}</p><div class="reviewer"><span class="review-avatar">{{ r.name[0] }}</span><span><strong>{{ r.name }}</strong></span></div></div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+    <aside class="booking-info">
+        <div class="summary-card">
+            <div class="summary-head"><span class="eyebrow">BOOK NOW</span><h3>Consult Dr. {{ doc.name.split(' ')[-1] }}</h3></div>
+            <div class="summary-body">
+                <div class="total-row"><span>Consultation fee</span><strong>{{ currency_symbol }}{{ doc.fee if doc.fee is not none else consultation_fee }}</strong></div>
+                <a class="btn btn-primary full" style="margin-top:14px" href="{{ url_for('book') }}">Check live slots</a>
+                <div class="hold-note">Online payment optional — pay by card, UPI or at the clinic. Instant confirmation.</div>
+            </div>
+        </div>
+        {% if related %}
+        <div class="panel"><div class="panel-head"><h2>Related doctors</h2></div>
+            {% for r in related %}
+            <a class="related-row" href="{{ url_for('doctor_detail', doctor_id=r.id) }}"><span class="doc-photo sm p-{{ (r.id % 6) + 1 }}">{{ r.name[0] }}</span><span><strong>Dr. {{ r.name }}</strong><small>{{ r.qualification or r.branch }} · ★ {{ '%.1f'|format(r.rating or 4.8) }}</small></span><span>→</span></a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </aside>
+</section>
+{% endblock %}

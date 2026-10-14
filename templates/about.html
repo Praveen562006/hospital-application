@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}About Us - Psmhealthcare{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <span class="eyebrow">ABOUT PSMHEALTHCARE</span>
+    <h1>Care you can trust,<br><em>technology you can feel.</em></h1>
+    <p>Since our founding, we've combined compassionate doctors with modern online booking — so quality healthcare is never more than a click away.</p>
+    <div class="hero-btns">
+        <a class="btn btn-primary btn-lg" href="{{ url_for('book') }}">Book a visit</a>
+        <a class="btn btn-ghost btn-lg" href="{{ url_for('doctors_page') }}">Meet our doctors</a>
+    </div>
+</section>
+
+<div class="trust-bar">
+    <div><strong>{{ stats.doctors }}+</strong><span>Specialist doctors</span></div>
+    <div><strong>{{ stats.specialties }}</strong><span>Departments</span></div>
+    <div><strong>{{ stats.patients }}+</strong><span>Registered patients</span></div>
+    <div><strong>{{ stats.appointments }}+</strong><span>Consultations</span></div>
+</div>
+
+<section class="section">
+    <div class="about-split">
+        <div>
+            <span class="eyebrow">OUR MISSION</span>
+            <h2>Healthcare without the waiting room anxiety</h2>
+            <p>Long queues, unclear fees and rushed visits are why people delay care. We rebuilt the clinic experience around three promises: <strong>transparent pricing</strong>, <strong>real-time slots</strong> and <strong>doctors who listen</strong>.</p>
+            <ul class="tick-list">
+                <li>✓ Board-certified specialists across {{ stats.specialties }} departments</li>
+                <li>✓ 30-minute unhurried consultations, Mon–Sat 9 AM – 5 PM</li>
+                <li>✓ Online payment with instant e-receipt, or pay at clinic</li>
+                <li>✓ Verified patient reviews on every doctor profile</li>
+            </ul>
+        </div>
+        <div class="about-img">
+            <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=900&auto=format&fit=crop" alt="Modern hospital corridor">
+            <div class="float-card fc-2"><strong>NABH-style protocols</strong><span>sterile · safe · audited</span></div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-tinted">
+    <div class="section-title"><span class="eyebrow">OUR VALUES</span><h2>What guides every consultation</h2></div>
+    <div class="values-grid">
+        <div class="medilab-feature-card"><div class="card-icon">♥</div><h3>Patients first</h3><p>Unrushed appointments, plain-language diagnosis and honest treatment options — surgery only when truly needed.</p></div>
+        <div class="medilab-feature-card"><div class="card-icon">✚</div><h3>Clinical excellence</h3><p>Continuous training, peer reviews and evidence-based protocols across every department.</p></div>
+        <div class="medilab-feature-card"><div class="card-icon">◉</div><h3>Radical transparency</h3><p>Fees shown upfront, e-receipts for every payment and refunds on cancellation without fine print.</p></div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-title"><span class="eyebrow">LEADERSHIP IN CARE</span><h2>Meet a few of our specialists</h2></div>
+    <div class="doctors-grid pro-grid">
+        {% for doc in doctors %}
+        <a class="doctor-card pro-card" href="{{ url_for('doctor_detail', doctor_id=doc.id) }}">
+            <div class="doc-top"><div class="doc-photo p-{{ (doc.id % 6) + 1 }}">{{ doc.name[0] }}</div><span class="rating-chip">★ {{ '%.1f'|format(doc.rating or 4.8) }}</span></div>
+            <h4>Dr. {{ doc.name }}</h4><span class="badge">{{ doc.branch }}</span>
+            <p class="doc-qual">{{ doc.qualification }} · {{ doc.experience }}+ yrs</p>
+            <span class="btn btn-primary full btn-sm">View Profile</span>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="cta-banner">
+    <div><h2>Experience the difference yourself.</h2><p>Join {{ stats.patients }}+ patients who booked in under a minute.</p></div>
+    <div class="cta-btns"><a class="btn btn-lg" style="background:#fff;color:var(--primary)" href="{{ url_for('book') }}">Book appointment</a></div>
+</section>
+{% endblock %}

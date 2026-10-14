@@ -36,7 +36,7 @@
 <div class="booking-layout">
 
     <div class="booking-main booking-workflow-focus">
-        <form method="POST" action="{{ url_for('book_appointment') }}" id="bookingForm" class="panel booking-panel">
+        <form method="POST" action="{{ url_for('book_appointment') }}" id="bookingForm" class="panel booking-panel" data-default-fee="{{ consultation_fee }}">
 
             <!-- STEP 1: Specialist -->
             <div class="step-panel is-active" data-panel="1">
@@ -69,7 +69,7 @@
                         <line x1="12" y1="8" x2="12" y2="12"></line>
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
                     </svg>
-                    Consultations last 30 minutes and run Monday to Saturday, 9:00 AM to 5:00 PM. The {{ currency_symbol }}{{ consultation_fee }} fee can be paid online now or at the clinic.
+                    Consultations last 30 minutes and run Monday to Saturday, 9:00 AM to 5:00 PM. Each doctor's fee is shown next to their name and can be paid online now or at the clinic.
                 </div>
 
                 <div class="wizard-actions">
@@ -169,14 +169,14 @@
 
                 <div class="total-row" style="margin-top: 20px;">
                     <span>Consultation fee (30 min)</span>
-                    <strong>{{ currency_symbol }}{{ consultation_fee }}</strong>
+                    <strong>{{ currency_symbol }}<span data-doctor-fee>—</span></strong>
                 </div>
 
                 <div class="hold-note">
                     <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                     </svg>
-                    Your appointment will be confirmed immediately. Online payment is optional; you can pay the {{ currency_symbol }}{{ consultation_fee }} fee at the clinic.
+                    Your appointment will be confirmed immediately. Online payment is optional; you can pay the consultation fee at the clinic.
                 </div>
 
                 <input type="hidden" id="paymentChoice" name="payment_choice" value="pay_online">
@@ -236,7 +236,7 @@
 
                 <div class="total-row">
                     <span>Consultation fee</span>
-                    <strong>{{ currency_symbol }}{{ consultation_fee }}</strong>
+                    <strong>{{ currency_symbol }}<span data-doctor-fee>—</span></strong>
                 </div>
 
                 <div class="hold-note">

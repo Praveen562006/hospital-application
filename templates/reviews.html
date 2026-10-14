@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Patient Reviews - Psmhealthcare{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <span class="eyebrow">PATIENT REVIEWS</span>
+    <h1>{{ avg_rating }}★ from <em>{{ review_count }} reviews</em></h1>
+    <p>Unedited feedback from verified visits. Had a great experience? We'd love to hear it.</p>
+</section>
+
+<section class="section reviews-layout">
+    <div class="reviews-main">
+        {% for r in reviews %}
+        <div class="review-card full-review">
+            <div class="stars">{% for i in range(r.rating) %}★{% endfor %}{% for i in range(5 - r.rating) %}☆{% endfor %}</div>
+            <h4>"{{ r.title }}"</h4>
+            <p>{{ r.comment }}</p>
+            <div class="reviewer">
+                <span class="review-avatar">{{ r.name[0] }}</span>
+                <span><strong>{{ r.name }}</strong><small>{{ r.created_at[:10] }}{% if r.doctor_name %} · Dr. {{ r.doctor_name }} ({{ r.doctor_branch }}){% endif %}</small></span>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty"><h3>No reviews yet</h3><p>Be the first to share your experience.</p></div>
+        {% endfor %}
+    </div>
+    <aside class="reviews-side">
+        <div class="panel rating-summary">
+            <h2>{{ avg_rating }}<small>/5</small></h2>
+            <div class="stars">★★★★★</div>
+            <p class="muted">{{ review_count }} verified reviews</p>
+            {% for star in [5,4,3,2,1] %}
+            <div class="dist-row"><span>{{ star }}★</span><div class="dist-bar"><i style="width:{{ (dist[star] / (review_count or 1) * 100)|round }}%"></i></div><span>{{ dist[star] }}</span></div>
+            {% endfor %}
+        </div>
+        <div class="panel">
+            <div class="panel-head"><h2>Write a review</h2></div>
+            <form method="post">
+                <label>Your name<input name="name" required maxlength="60" placeholder="e.g. Priya S."></label>
+                <label>Headline<input name="title" maxlength="120" placeholder="e.g. Excellent care"></label>
+                <div class="form-grid" style="grid-template-columns:1fr 1fr">
+                    <label>Rating
+                        <select name="rating"><option value="5">★★★★★ 5</option><option value="4">★★★★ 4</option><option value="3">★★★ 3</option><option value="2">★★ 2</option><option value="1">★ 1</option></select>
+                    </label>
+                    <label>Doctor (optional)
+                        <select name="doctor_id"><option value="">General</option>{% for d in doctors %}<option value="{{ d.id }}">Dr. {{ d.name }}</option>{% endfor %}</select>
+                    </label>
+                </div>
+                <label>Your review<textarea name="comment" required maxlength="1000" rows="4" placeholder="How was your visit?"></textarea></label>
+                <button class="btn btn-primary full">Publish review</button>
+            </form>
+        </div>
+    </aside>
+</section>
+{% endblock %}

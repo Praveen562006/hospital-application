@@ -103,20 +103,20 @@
 
     <nav class="navlinks" id="navLinks">
         <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('about') }}">About</a>
+        <a href="{{ url_for('doctors_page') }}">Doctors</a>
+        <a href="{{ url_for('index') }}#departments">Departments</a>
+        <a href="{{ url_for('reviews_page') }}">Reviews</a>
         {% if current_user and current_user.role == 'patient' %}
             <a href="{{ url_for('patient_dashboard') }}">My Appointments</a>
             <a href="{{ url_for('book') }}">Book a Visit</a>
-            <a href="{{ url_for('index') }}#departments">Departments</a>
         {% elif current_user and current_user.role == 'admin' %}
             <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
             <a href="{{ url_for('admin_doctors') }}">Doctors</a>
             <a href="{{ url_for('admin_branches') }}">Departments</a>
             <a href="{{ url_for('admin_appointments') }}">Appointments</a>
         {% else %}
-            <a href="{{ url_for('index') }}#departments">Departments</a>
-            <a href="{{ url_for('index') }}#doctors">Doctors</a>
             <a href="{{ url_for('login', role='patient') }}">Patient Portal</a>
-            <a href="{{ url_for('login', role='admin') }}">Admin</a>
         {% endif %}
     </nav>
 
@@ -171,14 +171,41 @@
 </main>
 
 <footer>
-    <div>
-        <strong>Psmhealthcare</strong>
-        <p>Modern clinical healthcare with certified specialists, transparent pricing, and instant online payment confirmation.</p>
+    <div class="footer-grid">
+        <div>
+            <strong>Psmhealthcare<span style="color:#3fa2ff">+</span></strong>
+            <p>Modern clinical healthcare with certified specialists, transparent pricing, and instant online confirmation. Mon–Sat, 9 AM – 5 PM.</p>
+            <div class="footer-social">
+                <a href="#" aria-label="X">X</a>
+                <a href="#" aria-label="Facebook">f</a>
+                <a href="#" aria-label="Instagram">in</a>
+                <a href="#" aria-label="LinkedIn">li</a>
+            </div>
+        </div>
+        <div>
+            <h4>Quick links</h4>
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('about') }}">About us</a>
+            <a href="{{ url_for('doctors_page') }}">Find a doctor</a>
+            <a href="{{ url_for('reviews_page') }}">Patient reviews</a>
+            <a href="{{ url_for('book') }}">Book appointment</a>
+        </div>
+        <div>
+            <h4>Departments</h4>
+            <a href="{{ url_for('index') }}#departments">Cardiology</a>
+            <a href="{{ url_for('index') }}#departments">Neurology</a>
+            <a href="{{ url_for('index') }}#departments">Pediatrics</a>
+            <a href="{{ url_for('index') }}#departments">Orthopedics</a>
+            <a href="{{ url_for('index') }}#departments">Eye Care</a>
+        </div>
+        <div class="clinic-hours">
+            <h4>Visit us</h4>
+            <p style="margin:0">12 Health Park Avenue<br>Chennai, India<br>+1 5589 55488 55<br>contact@psmhealthcare.com</p>
+            <div style="margin-top:10px">Clinic hours:<strong>Mon - Sat: 9:00 AM - 5:00 PM</strong></div>
+            <a class="btn btn-primary btn-sm" style="margin-top:12px" href="{{ url_for('book') }}">Book a visit</a>
+        </div>
     </div>
-    <div class="clinic-hours">
-        Clinic Consultation Hours:
-        <strong>Mon - Sat: 9:00 AM - 5:00 PM</strong>
-    </div>
+    <div class="footer-bottom">© 2026 Psmhealthcare. Demo clinic website — no real medical advice. Emergency? Call your local emergency number immediately.</div>
 </footer>
 
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>

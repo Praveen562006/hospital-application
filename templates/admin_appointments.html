@@ -41,7 +41,7 @@
                                 </span><br>
                                 <small class="muted">{{ a.reference }}</small>
                             {% else %}
-                                <span class="badge badge-muted">Pay at clinic</span>
+                                <span class="badge badge-muted">Pay {{ currency_symbol }}{{ a.consultation_fee }} at clinic</span>
                             {% endif %}
                         </td>
                         <td>

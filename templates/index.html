@@ -1,240 +1,165 @@
 {% extends 'base.html' %}
-
-{% block title %}Psmhealthcare - Welcome{% endblock %}
-
+{% block title %}Psmhealthcare - Trusted Hospital & Online Appointments{% endblock %}
 {% block content %}
 
-<!-- Hero -->
-<section class="medilab-hero">
-    <div class="hero-orbs" aria-hidden="true">
-        <span class="orb orb-1"></span>
-        <span class="orb orb-2"></span>
-        <span class="orb orb-3"></span>
-    </div>
-    <div class="hero-inner">
-        <span class="hero-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--primary)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
-            Online booking & instant payment confirmation
-        </span>
-        <h1>Your health, our <em>priority</em>.</h1>
-        <p>We are a dedicated team of medical professionals delivering exceptional patient care. Book a 30-minute consultation with a certified specialist - pay online and get your slot confirmed in seconds.</p>
-
-        <div class="hero-btns">
-            <a class="btn btn-primary btn-lg" href="{{ url_for('book') if (current_user and current_user.role == 'patient') else url_for('login', role='patient') }}">
-                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-                Make an Appointment
-            </a>
-            <a class="btn btn-ghost btn-lg" href="{{ url_for('signup') }}">
-                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="8.5" cy="7" r="4"></circle>
-                    <line x1="20" y1="8" x2="20" y2="14"></line>
-                    <line x1="23" y1="11" x2="17" y2="11"></line>
-                </svg>
-                New Patient Registration
-            </a>
-        </div>
-
-        <div class="hero-trust">
-            <div>
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                {{ stats.doctors }} specialist doctors
-            </div>
-            <div>
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Zero double-bookings
-            </div>
-            <div>
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Consultations flat {{ currency_symbol }}{{ consultation_fee }}
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Feature cards -->
-<div class="hero-cards-wrap">
-    <div class="hero-cards-grid perspective-grid">
-        <div class="card-why-choose">
-            <div>
-                <h3>Why Choose Psmhealthcare?healthcare?</h3>
-                <p>Clinical excellence meets modern scheduling. Choose a specialist, pick a live slot, pay securely online and walk in confirmed - all in under a minute.</p>
-            </div>
-            <a href="{{ url_for('book') if (current_user and current_user.role == 'patient') else url_for('login', role='patient') }}" class="btn-learn-more">
-                Book now →
-            </a>
-        </div>
-
-        <div class="medilab-feature-card tilt" data-tilt>
-            <div class="card-icon">
-                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                    <path d="M9 12h6"></path>
-                    <path d="M9 16h6"></path>
-                    <path d="M9 8h6"></path>
-                </svg>
-            </div>
-            <h3>Clinical Departments</h3>
-            <p>Comprehensive care across Cardiology, Neurology, Pediatrics and more.</p>
-        </div>
-
-        <div class="medilab-feature-card tilt" data-tilt>
-            <div class="card-icon">
-                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-                    <line x1="2" y1="10" x2="22" y2="10"></line>
-                </svg>
-            </div>
-            <h3>Secure Online Payment</h3>
-            <p>Pay by card, UPI or net banking. Instant e-receipt and a protectable, refundable booking.</p>
-        </div>
-
-        <div class="medilab-feature-card tilt" data-tilt>
-            <div class="card-icon">
-                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="7" width="18" height="13" rx="2"></rect>
-                    <path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"></path>
-                    <line x1="12" y1="11" x2="12" y2="16"></line>
-                    <line x1="9.5" y1="13.5" x2="14.5" y2="13.5"></line>
-                </svg>
-            </div>
-            <h3>Certified Specialists</h3>
-            <p>Experienced clinicians available Monday to Saturday, 9:00 AM to 5:00 PM.</p>
-        </div>
-    </div>
+<!-- Emergency strip -->
+<div class="emergency-strip">
+    <span class="pulse-dot"></span>
+    <span><strong>24×7 Emergency helpline:</strong> +1 5589 55488 55 &nbsp;·&nbsp; Walk-ins accepted Mon–Sat, 9 AM – 5 PM</span>
+    <a href="{{ url_for('book') }}">Book now →</a>
 </div>
 
-<!-- Stats -->
-<section class="stats-section">
-    <div class="stats-grid">
-        <div class="stat-box">
-            <div class="stat-icon">
-                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
+<!-- Hero -->
+<section class="hero-pro">
+    <div class="hero-pro-inner">
+        <div class="hero-copy">
+            <span class="hero-pill">★ {{ avg_rating }} rated · {{ review_count }}+ verified patient reviews</span>
+            <h1>World-class care,<br><em>one click away.</em></h1>
+            <p>Consult {{ stats.doctors }}+ trusted specialists across {{ stats.specialties }} departments. Live slots, transparent fees and instant confirmation — just like the best hospital websites.</p>
+            <div class="hero-btns">
+                <a class="btn btn-primary btn-lg" href="{{ url_for('book') if (current_user and current_user.role == 'patient') else url_for('login', role='patient') }}">Make an Appointment</a>
+                <a class="btn btn-ghost btn-lg" href="{{ url_for('doctors_page') }}">Find a Doctor</a>
             </div>
-            <div>
-                <strong>{{ stats.doctors }}</strong>
-                <span>Doctors & Specialists</span>
-            </div>
-        </div>
-
-        <div class="stat-box">
-            <div class="stat-icon">
-                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 21h18"></path>
-                    <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path>
-                    <line x1="12" y1="7" x2="12" y2="11"></line>
-                    <line x1="10" y1="9" x2="14" y2="9"></line>
-                </svg>
-            </div>
-            <div>
-                <strong>{{ stats.specialties }}</strong>
-                <span>Clinical Departments</span>
-            </div>
-        </div>
-
-        <div class="stat-box">
-            <div class="stat-icon">
-                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                </svg>
-            </div>
-            <div>
-                <strong>{{ stats.patients }}</strong>
-                <span>Registered Patients</span>
+            <!-- Booking search widget -->
+            <form class="hero-search" action="{{ url_for('doctors_page') }}" method="get">
+                <div class="hs-field">
+                    <label>Department</label>
+                    <select name="dept">
+                        <option value="">All departments</option>
+                        {% for b in branches %}<option value="{{ b.id }}">{{ b.name }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="hs-field">
+                    <label>Doctor or symptom</label>
+                    <input name="q" placeholder="e.g. cardiologist, migraine, knee pain">
+                </div>
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+            <div class="hero-trust">
+                <div>✓ NABH-style quality protocols</div>
+                <div>✓ Zero double-bookings</div>
+                <div>✓ {{ currency_symbol }}{{ consultation_fee }}+ transparent fees</div>
             </div>
         </div>
-
-        <div class="stat-box">
-            <div class="stat-icon">
-                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                    <polyline points="9 16 11 18 15 14"></polyline>
-                </svg>
+        <div class="hero-visual">
+            <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=900&auto=format&fit=crop" alt="Doctor consulting patient">
+            <div class="float-card fc-1">
+                <strong>{{ stats.appointments }}+</strong><span>consultations done</span>
             </div>
-            <div>
-                <strong>{{ stats.appointments }}</strong>
-                <span>Confirmed Consultations</span>
+            <div class="float-card fc-2">
+                <span class="stars">★★★★★</span>
+                <strong>{{ avg_rating }}/5 patient rating</strong>
+            </div>
+            <div class="float-card fc-3">
+                <span class="avatar-stack">{% for d in doctors[:3] %}<i>{{ d.name[0] }}</i>{% endfor %}</span>
+                <span>{{ stats.doctors }} specialists online</span>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Trust bar -->
+<div class="trust-bar">
+    <div><strong>{{ stats.doctors }}+</strong><span>Expert doctors</span></div>
+    <div><strong>{{ stats.specialties }}</strong><span>Departments</span></div>
+    <div><strong>{{ stats.patients }}+</strong><span>Happy patients</span></div>
+    <div><strong>{{ stats.appointments }}+</strong><span>Consultations</span></div>
+    <div><strong>{{ avg_rating }}★</strong><span>Average rating</span></div>
+</div>
 
 <!-- Departments -->
 <section class="section" id="departments">
     <div class="section-title">
-        <h2>Medical Departments</h2>
-        <p>Explore our specialized clinical departments staffed by dedicated medical experts.</p>
+        <span class="eyebrow">OUR SERVICES</span>
+        <h2>Centres of excellence</h2>
+        <p>Specialised care with dedicated doctors, modern diagnostics and honest pricing.</p>
     </div>
-
-    <div class="department-grid perspective-grid">
+    <div class="department-grid">
         {% for branch in branches %}
-            <div class="department-card tilt" data-tilt>
-                <div class="dept-icon">
-                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="16"></line>
-                        <line x1="8" y1="12" x2="16" y2="12"></line>
-                    </svg>
-                </div>
-                <h3>{{ branch.name }}</h3>
-                <p>Specialized diagnostic and therapeutic care provided by our {{ branch.name }} clinician team.</p>
-                <a href="{{ url_for('book') if (current_user and current_user.role == 'patient') else url_for('login', role='patient') }}" class="text-link">
-                    Book Consultation
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
-                </a>
-            </div>
+        <a class="department-card dept-pro" href="{{ url_for('doctors_page') }}?dept={{ branch.id }}">
+            <div class="dept-icon d-{{ loop.index % 5 }}">{{ branch.name[0] }}</div>
+            <h3>{{ branch.name }}</h3>
+            <p>{{ department_info.get(branch.name, 'Specialised diagnostic and therapeutic care by our ' + branch.name + ' team.') }}</p>
+            <span class="text-link">View doctors →</span>
+        </a>
         {% endfor %}
     </div>
 </section>
 
-<!-- Doctors -->
-<section class="section" id="doctors">
+<!-- Doctors — click for details -->
+<section class="section section-tinted" id="doctors">
     <div class="section-title">
-        <h2>Our Doctors</h2>
-        <p>Meet our experienced physicians available for 30-minute consultations - bookable online, every weekday.</p>
+        <span class="eyebrow">MEET THE TEAM</span>
+        <h2>Top-rated doctors, ready to help</h2>
+        <p>Click any doctor to see qualifications, experience, fees, live availability and patient reviews.</p>
+        <a class="btn btn-ghost btn-sm" style="margin-top:14px" href="{{ url_for('doctors_page') }}">View all {{ stats.doctors }} doctors</a>
     </div>
-
-    <div class="doctors-grid perspective-grid">
-        {% for doc in doctors %}
-            <div class="doctor-card tilt" data-tilt>
-                <div>
-                    <div class="doc-avatar">
-                        <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                            <path d="M12 14v3"></path>
-                            <path d="M10 17h4"></path>
-                        </svg>
-                    </div>
-                    <h4>Dr. {{ doc.name }}</h4>
-                    <span class="badge">{{ doc.branch }}</span>
-                    <p>30-minute consultations | Mon - Sat | Online payment</p>
-                </div>
-                <a class="btn btn-primary full btn-sm" href="{{ url_for('book') if (current_user and current_user.role == 'patient') else url_for('login', role='patient') }}">
-                    Book Appointment
-                </a>
+    <div class="doctors-grid pro-grid">
+        {% for doc in doctors[:8] %}
+        <a class="doctor-card pro-card" href="{{ url_for('doctor_detail', doctor_id=doc.id) }}">
+            <div class="doc-top">
+                <div class="doc-photo p-{{ (doc.id % 6) + 1 }}">{{ doc.name[0] }}</div>
+                <span class="rating-chip">★ {{ '%.1f'|format(doc.rating or 4.8) }}</span>
             </div>
+            <h4>Dr. {{ doc.name }}</h4>
+            <span class="badge">{{ doc.branch }}</span>
+            <p class="doc-qual">{{ doc.qualification or 'MBBS, MD' }} · {{ doc.experience or 5 }}+ yrs</p>
+            <p class="doc-fee">{{ currency_symbol }}{{ doc.fee if doc.fee is not none else consultation_fee }} consultation</p>
+            <span class="btn btn-primary full btn-sm">View Profile & Book</span>
+        </a>
         {% endfor %}
     </div>
 </section>
+
+<!-- How it works -->
+<section class="section">
+    <div class="section-title">
+        <span class="eyebrow">HOW IT WORKS</span>
+        <h2>Booked in under a minute</h2>
+    </div>
+    <div class="steps3">
+        <div class="step3"><span class="n">1</span><h3>Choose your doctor</h3><p>Search by department, symptom or name. Compare ratings, fees and experience.</p></div>
+        <div class="step3"><span class="n">2</span><h3>Pick a live slot</h3><p>Real-time availability Mon–Sat, 9 AM – 5 PM. Booked slots disappear instantly.</p></div>
+        <div class="step3"><span class="n">3</span><h3>Pay & walk in</h3><p>Pay online by card / UPI or at the clinic. Get instant confirmation + e-receipt.</p></div>
+    </div>
+    <div style="text-align:center;margin-top:26px">
+        <a class="btn btn-primary btn-lg" href="{{ url_for('book') }}">Start booking →</a>
+    </div>
+</section>
+
+<!-- Reviews preview -->
+<section class="section section-tinted">
+    <div class="section-title">
+        <span class="eyebrow">PATIENT STORIES</span>
+        <h2>Loved by {{ review_count }}+ patients</h2>
+        <p>Real reviews from real visits. <a href="{{ url_for('reviews_page') }}">Read all reviews →</a></p>
+    </div>
+    <div class="review-grid-home">
+        {% for r in featured_reviews %}
+        <div class="review-card">
+            <div class="stars">★★★★★</div>
+            <h4>"{{ r.title }}"</h4>
+            <p>{{ r.comment[:160] }}{% if r.comment|length > 160 %}…{% endif %}</p>
+            <div class="reviewer"><span class="review-avatar">{{ r.name[0] }}</span><span><strong>{{ r.name }}</strong><small>Verified patient</small></span></div>
+        </div>
+        {% endfor %}
+    </div>
+    <div style="text-align:center;margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-ghost" href="{{ url_for('reviews_page') }}">All reviews</a>
+        <a class="btn btn-primary" href="{{ url_for('about') }}">Why Psmhealthcare?</a>
+    </div>
+</section>
+
+<!-- CTA banner -->
+<section class="cta-banner">
+    <div>
+        <h2>Need care today? Slots fill fast.</h2>
+        <p>Same-week appointments available across all departments. Emergency? Call +1 5589 55488 55.</p>
+    </div>
+    <div class="cta-btns">
+        <a class="btn btn-lg" style="background:#fff;color:var(--primary)" href="{{ url_for('book') }}">Book appointment</a>
+        <a class="btn btn-lg btn-outline-w" href="{{ url_for('doctors_page') }}">Browse doctors</a>
+    </div>
+</section>
+
 {% endblock %}

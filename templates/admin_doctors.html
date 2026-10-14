@@ -6,8 +6,8 @@
 <section class="dashboard-head">
     <div>
         <span class="eyebrow">ADMIN / DOCTORS</span>
-        <h1>Doctor directory</h1>
-        <p>Add clinicians and assign them to departments.</p>
+        <h1>Doctor directory ({{ doctors|length }})</h1>
+        <p>Add clinicians with full profiles — these appear on the website cards and detail pages.</p>
     </div>
 </section>
 
@@ -17,18 +17,24 @@
             <h2>Add doctor</h2>
         </div>
         <form method="post" action="{{ url_for('admin_doctors') }}">
-            <label for="doctor-name">
-                Doctor name
-                <input id="doctor-name" name="name" required placeholder="e.g. Dr. Jane Smith">
-            </label>
-            <label for="doctor-branch">
-                Department
-                <select id="doctor-branch" name="branch_id" required>
-                    {% for b in branches %}
-                        <option value="{{ b.id }}">{{ b.name }}</option>
-                    {% endfor %}
-                </select>
-            </label>
+            <div class="form-grid">
+                <label>Doctor name<input name="name" required placeholder="e.g. Jane Smith"></label>
+                <label>Department
+                    <select name="branch_id" required>
+                        {% for b in branches %}<option value="{{ b.id }}">{{ b.name }}</option>{% endfor %}
+                    </select>
+                </label>
+            </div>
+            <div class="form-grid">
+                <label>Qualification<input name="qualification" placeholder="e.g. MBBS, MD Cardiology" value="MBBS, MD"></label>
+                <label>Languages<input name="languages" placeholder="English, Hindi" value="English, Hindi"></label>
+            </div>
+            <div class="form-grid three">
+                <label>Experience (yrs)<input name="experience" type="number" min="0" max="60" value="5"></label>
+                <label>Fee (₹)<input name="fee" type="number" min="0" value="{{ consultation_fee }}"></label>
+                <label>Rating (1-5)<input name="rating" type="number" step="0.1" min="1" max="5" value="4.8"></label>
+            </div>
+            <label>Bio / specialisation<textarea name="bio" rows="3" placeholder="e.g. Specialist in diabetes, thyroid and preventive health checks."></textarea></label>
             <button class="btn btn-primary">Add doctor</button>
         </form>
     </section>
@@ -43,14 +49,16 @@
                     <tr>
                         <th>Name</th>
                         <th>Department</th>
+                        <th>Exp / Fee</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for d in doctors %}
                         <tr>
-                            <td><strong>Dr. {{ d.name }}</strong></td>
+                            <td><strong>Dr. {{ d.name }}</strong><br><small class="muted">{{ d.qualification or '' }}</small></td>
                             <td><span class="badge">{{ d.branch }}</span></td>
+                            <td><small>{{ d.experience or 0 }} yrs · ₹{{ d.fee if d.fee is not none else consultation_fee }} · ★{{ '%.1f'|format(d.rating or 4.8) }}</small></td>
                             <td>
                                 <form method="post" action="{{ url_for('delete_doctor', doctor_id=d.id) }}">
                                     <button class="btn btn-danger-outline btn-sm" onclick="return confirm('Remove this doctor?')">

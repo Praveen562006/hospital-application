@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
         themeToggle.addEventListener("click", () => {
             const current = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
             document.documentElement.setAttribute("data-theme", current);
-            localStorage.setItem("Psmhealthcarehealthcare-theme", current);
+            localStorage.setItem("Psmhealthcare-theme", current);
         });
     }
 
@@ -111,6 +111,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const timePreview = document.getElementById("selectedTimePreview");
         let currentStep = 1;
         let availabilityRequest = 0;
+        const defaultFee = Number(bookingForm.dataset.defaultFee);
+        const feeNodes = document.querySelectorAll("[data-doctor-fee]");
         const setBookingButtonsDisabled = disabled => {
             if (bookButton) bookButton.disabled = disabled;
             if (bookLaterButton) bookLaterButton.disabled = disabled;
@@ -141,9 +143,16 @@ document.addEventListener("DOMContentLoaded", function () {
         function syncSummary() {
             const branchLabel = branch.selectedOptions[0] ? branch.selectedOptions[0].text : "";
             const doctorLabel = doctor.selectedOptions[0] ? doctor.selectedOptions[0].text : "";
+            const selectedFee = doctor.selectedOptions[0]?.dataset.fee;
+            const fee = doctor.value
+                ? (selectedFee !== undefined ? selectedFee : String(defaultFee))
+                : "—";
             const dateValue = appointmentDate ? appointmentDate.value : "";
             const timeValue = appointmentTime ? appointmentTime.value : "";
 
+            feeNodes.forEach(node => {
+                node.textContent = fee;
+            });
             setText("sumBranch", branch.value ? branchLabel : "Not selected");
             setText("sumDoctor", doctor.value ? doctorLabel : "Not selected");
             setText("sumDate", formatDate(dateValue));
@@ -204,6 +213,7 @@ document.addEventListener("DOMContentLoaded", function () {
         branch.addEventListener("change", async function () {
             doctor.innerHTML = '<option value="">Loading doctors...</option>';
             doctor.disabled = true;
+            syncSummary();
             if (appointmentTime) appointmentTime.value = "";
             if (timePreview) timePreview.value = "";
             setBookingButtonsDisabled(true);
@@ -227,7 +237,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 list.forEach(item => {
                     const option = document.createElement("option");
                     option.value = item.id;
-                    option.textContent = `Dr. ${item.name}`;
+                    option.dataset.fee = String(item.fee ?? defaultFee);
+                    const extra = item.experience ? ` · ${item.experience}+ yrs` : "";
+                    const fee = ` · ₹${item.fee ?? defaultFee}`;
+                    const rate = item.rating ? ` · ★${Number(item.rating).toFixed(1)}` : "";
+                    option.textContent = `Dr. ${item.name}${extra}${fee}${rate}`;
                     doctor.appendChild(option);
                 });
                 doctor.disabled = list.length === 0;

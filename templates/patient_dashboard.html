@@ -24,8 +24,8 @@
         <strong>{{ past_count }}</strong>
     </div>
     <div class="metric">
-        <span>Consultation fee</span>
-        <strong>{{ currency_symbol }}{{ consultation_fee }}</strong>
+        <span>Doctor consultation fees</span>
+        <strong>Varies</strong>
     </div>
     <div class="metric">
         <span>Clinic days</span>
@@ -71,7 +71,7 @@
                     <div class="appt-meta">
                         {% if a.reference %}
                             <span class="receipt">
-                                {{ currency_symbol }}{{ a.amount if a.amount else consultation_fee }}
+                                {{ currency_symbol }}{{ a.amount if a.amount is not none else a.consultation_fee }}
                                 | {{ a.reference }}
                                 {% if a.method == 'card' and a.card_brand %}({{ a.card_brand }} **{{ a.card_last4 }}){% endif %}
                             </span>
@@ -81,7 +81,7 @@
                     <div class="appt-actions">
                         {% if a.status == 'pending' or not a.reference %}
                             <a class="btn btn-primary btn-sm" href="{{ url_for('payment_checkout', appointment_id=a.id) }}">
-                                Pay {{ currency_symbol }}{{ consultation_fee }}
+                                Pay {{ currency_symbol }}{{ a.consultation_fee }}
                             </a>
                         {% endif %}
                         <form method="post" action="{{ url_for('cancel_appointment', appointment_id=a.id) }}" onsubmit="return confirm('Cancel this {% if a.status == 'confirmed' %}appointment{% else %}booking{% endif %}?{% if a.reference %} Your fee will be refunded.{% endif %}')">
